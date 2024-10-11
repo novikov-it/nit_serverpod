@@ -17,3 +17,6 @@ fields:
   ### Reason for a failed authentication attempt, only set if the authentication
   ### failed.
   failReason: AuthenticationFailReason?
+
+  ### The text to show for the failed authentication.
+  failText: String?

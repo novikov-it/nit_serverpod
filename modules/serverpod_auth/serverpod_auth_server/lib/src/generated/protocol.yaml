@@ -16,6 +16,10 @@ firebase:
 google:
   - authenticateWithServerAuthCode:
   - authenticateWithIdToken:
+phone:
+  - verifyOTP:
+  - sendOTP:
+  - resendOTP:
 status:
   - isSignedIn:
   - signOut:

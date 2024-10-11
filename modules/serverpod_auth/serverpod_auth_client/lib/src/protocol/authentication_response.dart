@@ -20,6 +20,7 @@ abstract class AuthenticationResponse implements _i1.SerializableModel {
     this.keyId,
     this.userInfo,
     this.failReason,
+    this.failText,
   });
 
   factory AuthenticationResponse({
@@ -28,6 +29,7 @@ abstract class AuthenticationResponse implements _i1.SerializableModel {
     int? keyId,
     _i2.UserInfo? userInfo,
     _i2.AuthenticationFailReason? failReason,
+    String? failText,
   }) = _AuthenticationResponseImpl;
 
   factory AuthenticationResponse.fromJson(
@@ -44,6 +46,7 @@ abstract class AuthenticationResponse implements _i1.SerializableModel {
           ? null
           : _i2.AuthenticationFailReason.fromJson(
               (jsonSerialization['failReason'] as int)),
+      failText: jsonSerialization['failText'] as String?,
     );
   }
 
@@ -64,12 +67,16 @@ abstract class AuthenticationResponse implements _i1.SerializableModel {
   /// failed.
   _i2.AuthenticationFailReason? failReason;
 
+  /// The text to show for the failed authentication.
+  String? failText;
+
   AuthenticationResponse copyWith({
     bool? success,
     String? key,
     int? keyId,
     _i2.UserInfo? userInfo,
     _i2.AuthenticationFailReason? failReason,
+    String? failText,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -79,6 +86,7 @@ abstract class AuthenticationResponse implements _i1.SerializableModel {
       if (keyId != null) 'keyId': keyId,
       if (userInfo != null) 'userInfo': userInfo?.toJson(),
       if (failReason != null) 'failReason': failReason?.toJson(),
+      if (failText != null) 'failText': failText,
     };
   }
 
@@ -97,12 +105,14 @@ class _AuthenticationResponseImpl extends AuthenticationResponse {
     int? keyId,
     _i2.UserInfo? userInfo,
     _i2.AuthenticationFailReason? failReason,
+    String? failText,
   }) : super._(
           success: success,
           key: key,
           keyId: keyId,
           userInfo: userInfo,
           failReason: failReason,
+          failText: failText,
         );
 
   @override
@@ -112,6 +122,7 @@ class _AuthenticationResponseImpl extends AuthenticationResponse {
     Object? keyId = _Undefined,
     Object? userInfo = _Undefined,
     Object? failReason = _Undefined,
+    Object? failText = _Undefined,
   }) {
     return AuthenticationResponse(
       success: success ?? this.success,
@@ -122,6 +133,7 @@ class _AuthenticationResponseImpl extends AuthenticationResponse {
       failReason: failReason is _i2.AuthenticationFailReason?
           ? failReason
           : this.failReason,
+      failText: failText is String? ? failText : this.failText,
     );
   }
 }

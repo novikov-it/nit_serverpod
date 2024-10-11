@@ -1,0 +1,23 @@
+### Database bindings for a sign in with phone.
+class: PhoneAuth
+table: serverpod_phone_auth
+fields:
+  # ### The id of the user, corresponds to the id field in [UserInfo].
+  # userId: int
+
+  ### The phoneNumber of the user.
+  phoneNumber: String
+
+  ### The hashed otp
+  hash: String
+
+  ### The expiration time of the otp
+  expirationTime: DateTime
+
+  ### If the otp has been used
+  isUsed: bool, default = false
+
+indexes:
+  serverpod_phone_auth_phone:
+    fields: phoneNumber
+    unique: false

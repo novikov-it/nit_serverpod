@@ -179,7 +179,7 @@ class AuthConfig {
     this.onUserUpdated,
     this.sendPasswordResetEmail,
     this.sendValidationEmail,
-    this.validationCodeLength = 8,
+    this.validationCodeLength = 6,
     this.passwordResetExpirationTime = const Duration(minutes: 15),
     this.extraSaltyHash = true,
     this.firebaseServiceAccountKeyJson =

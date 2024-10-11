@@ -211,6 +211,46 @@ class EndpointGoogle extends _i1.EndpointRef {
       );
 }
 
+/// Endpoint for handling Sign in with phone.
+/// {@category Endpoint}
+class EndpointPhone extends _i1.EndpointRef {
+  EndpointPhone(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'serverpod_auth.phone';
+
+  /// Authenticates a user with phone and OTP. Returns an
+  /// [AuthenticationResponse] with the users information.
+  _i2.Future<_i4.AuthenticationResponse> verifyOTP(
+    String phoneNumber,
+    String otp,
+  ) =>
+      caller.callServerEndpoint<_i4.AuthenticationResponse>(
+        'serverpod_auth.phone',
+        'verifyOTP',
+        {
+          'phoneNumber': phoneNumber,
+          'otp': otp,
+        },
+      );
+
+  /// Sends an OTP to the user.
+  _i2.Future<_i4.AuthenticationResponse> sendOTP(String phoneNumber) =>
+      caller.callServerEndpoint<_i4.AuthenticationResponse>(
+        'serverpod_auth.phone',
+        'sendOTP',
+        {'phoneNumber': phoneNumber},
+      );
+
+  /// Resends an OTP to the user.
+  _i2.Future<_i4.AuthenticationResponse> resendOTP(String phoneNumber) =>
+      caller.callServerEndpoint<_i4.AuthenticationResponse>(
+        'serverpod_auth.phone',
+        'resendOTP',
+        {'phoneNumber': phoneNumber},
+      );
+}
+
 /// Endpoint for getting status for a signed in user and module configuration.
 /// {@category Endpoint}
 class EndpointStatus extends _i1.EndpointRef {
@@ -299,6 +339,7 @@ class Caller extends _i1.ModuleEndpointCaller {
     email = EndpointEmail(this);
     firebase = EndpointFirebase(this);
     google = EndpointGoogle(this);
+    phone = EndpointPhone(this);
     status = EndpointStatus(this);
     user = EndpointUser(this);
   }
@@ -313,6 +354,8 @@ class Caller extends _i1.ModuleEndpointCaller {
 
   late final EndpointGoogle google;
 
+  late final EndpointPhone phone;
+
   late final EndpointStatus status;
 
   late final EndpointUser user;
@@ -324,6 +367,7 @@ class Caller extends _i1.ModuleEndpointCaller {
         'serverpod_auth.email': email,
         'serverpod_auth.firebase': firebase,
         'serverpod_auth.google': google,
+        'serverpod_auth.phone': phone,
         'serverpod_auth.status': status,
         'serverpod_auth.user': user,
       };
