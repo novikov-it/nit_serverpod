@@ -167,12 +167,27 @@ mapParameters:
   - returnNullableSimpleDataMapNullableSimpleData:
   - returnDurationMap:
   - returnDurationMapNullableDurations:
+methodSignaturePermutations:
+  - echoPositionalArg:
+  - echoNamedArg:
+  - echoNullableNamedArg:
+  - echoOptionalArg:
+  - echoPositionalAndNamedArgs:
+  - echoPositionalAndNullableNamedArgs:
+  - echoPositionalAndOptionalArgs:
+  - echoNamedArgStream:
+  - echoNamedArgStreamAsFuture:
+  - echoPositionalArgStream:
+  - echoPositionalArgStreamAsFuture:
 methodStreaming:
   - simpleStream:
   - neverEndingStreamWithDelay:
   - methodCallEndpoint:
   - intReturnFromStream:
   - nullableIntReturnFromStream:
+  - getBroadcastStream:
+  - wasBroadcastStreamCanceled:
+  - wasSessionWillCloseListenerCalled:
   - intStreamFromValue:
   - intEchoStream:
   - dynamicEchoStream:
@@ -228,6 +243,8 @@ redis:
   - countSubscribedChannels:
 serverOnlyScopedFieldModel:
   - getScopeServerOnlyField:
+serverOnlyScopedFieldChildModel:
+  - getProtocolField:
 signInRequired:
   - testMethod:
 adminScopeRequired:
@@ -251,12 +268,18 @@ testTools:
   - returnsString:
   - returnsStream:
   - returnsListFromInputStream:
+  - returnsSimpleDataListFromInputStream:
   - returnsStreamFromInputStream:
   - postNumberToSharedStream:
   - postNumberToSharedStreamAndReturnStream:
   - listenForNumbersOnSharedStream:
   - createSimpleData:
   - getAllSimpleData:
+  - createSimpleDatasInsideTransactions:
+  - createSimpleDataAndThrowInsideTransaction:
+  - createSimpleDatasInParallelTransactionCalls:
+  - echoSimpleData:
+  - echoSimpleDatas:
 authenticatedTestTools:
   - returnsString:
   - returnsStream:

@@ -35,7 +35,9 @@ import 'package:serverpod_test_client/src/protocol/module_datatype.dart'
     as _i18;
 import 'package:serverpod_test_client/src/protocol/scopes/scope_server_only_field.dart'
     as _i19;
-import 'protocol.dart' as _i20;
+import 'package:serverpod_test_client/src/protocol/scopes/scope_server_only_field_child.dart'
+    as _i20;
+import 'protocol.dart' as _i21;
 
 /// {@category Endpoint}
 class EndpointAsyncTasks extends _i1.EndpointRef {
@@ -1361,6 +1363,117 @@ class EndpointMapParameters extends _i1.EndpointRef {
 }
 
 /// {@category Endpoint}
+class EndpointMethodSignaturePermutations extends _i1.EndpointRef {
+  EndpointMethodSignaturePermutations(_i1.EndpointCaller caller)
+      : super(caller);
+
+  @override
+  String get name => 'methodSignaturePermutations';
+
+  _i2.Future<String> echoPositionalArg(String string) =>
+      caller.callServerEndpoint<String>(
+        'methodSignaturePermutations',
+        'echoPositionalArg',
+        {'string': string},
+      );
+
+  _i2.Future<String> echoNamedArg({required String string}) =>
+      caller.callServerEndpoint<String>(
+        'methodSignaturePermutations',
+        'echoNamedArg',
+        {'string': string},
+      );
+
+  _i2.Future<String?> echoNullableNamedArg({String? string}) =>
+      caller.callServerEndpoint<String?>(
+        'methodSignaturePermutations',
+        'echoNullableNamedArg',
+        {'string': string},
+      );
+
+  _i2.Future<String?> echoOptionalArg([String? string]) =>
+      caller.callServerEndpoint<String?>(
+        'methodSignaturePermutations',
+        'echoOptionalArg',
+        {'string': string},
+      );
+
+  _i2.Future<List<String?>> echoPositionalAndNamedArgs(
+    String string1, {
+    required String string2,
+  }) =>
+      caller.callServerEndpoint<List<String?>>(
+        'methodSignaturePermutations',
+        'echoPositionalAndNamedArgs',
+        {
+          'string1': string1,
+          'string2': string2,
+        },
+      );
+
+  _i2.Future<List<String?>> echoPositionalAndNullableNamedArgs(
+    String string1, {
+    String? string2,
+  }) =>
+      caller.callServerEndpoint<List<String?>>(
+        'methodSignaturePermutations',
+        'echoPositionalAndNullableNamedArgs',
+        {
+          'string1': string1,
+          'string2': string2,
+        },
+      );
+
+  _i2.Future<List<String?>> echoPositionalAndOptionalArgs(
+    String string1, [
+    String? string2,
+  ]) =>
+      caller.callServerEndpoint<List<String?>>(
+        'methodSignaturePermutations',
+        'echoPositionalAndOptionalArgs',
+        {
+          'string1': string1,
+          'string2': string2,
+        },
+      );
+
+  _i2.Stream<String> echoNamedArgStream(
+          {required _i2.Stream<String> strings}) =>
+      caller.callStreamingServerEndpoint<_i2.Stream<String>, String>(
+        'methodSignaturePermutations',
+        'echoNamedArgStream',
+        {},
+        {'strings': strings},
+      );
+
+  _i2.Future<String> echoNamedArgStreamAsFuture(
+          {required _i2.Stream<String> strings}) =>
+      caller.callStreamingServerEndpoint<_i2.Future<String>, String>(
+        'methodSignaturePermutations',
+        'echoNamedArgStreamAsFuture',
+        {},
+        {'strings': strings},
+      );
+
+  _i2.Stream<String> echoPositionalArgStream(_i2.Stream<String> strings) =>
+      caller.callStreamingServerEndpoint<_i2.Stream<String>, String>(
+        'methodSignaturePermutations',
+        'echoPositionalArgStream',
+        {},
+        {'strings': strings},
+      );
+
+  _i2.Future<String> echoPositionalArgStreamAsFuture(
+          _i2.Stream<String> strings) =>
+      caller.callStreamingServerEndpoint<_i2.Future<String>, String>(
+        'methodSignaturePermutations',
+        'echoPositionalArgStreamAsFuture',
+        {},
+        {'strings': strings},
+      );
+}
+
+/// {@category Endpoint}
 class EndpointMethodStreaming extends _i1.EndpointRef {
   EndpointMethodStreaming(_i1.EndpointCaller caller) : super(caller);
 
@@ -1404,6 +1517,28 @@ class EndpointMethodStreaming extends _i1.EndpointRef {
         'nullableIntReturnFromStream',
         {},
         {'stream': stream},
+      );
+
+  _i2.Stream<int?> getBroadcastStream() =>
+      caller.callStreamingServerEndpoint<_i2.Stream<int?>, int?>(
+        'methodStreaming',
+        'getBroadcastStream',
+        {},
+        {},
+      );
+
+  _i2.Future<bool> wasBroadcastStreamCanceled() =>
+      caller.callServerEndpoint<bool>(
+        'methodStreaming',
+        'wasBroadcastStreamCanceled',
+        {},
+      );
+
+  _i2.Future<bool> wasSessionWillCloseListenerCalled() =>
+      caller.callServerEndpoint<bool>(
+        'methodStreaming',
+        'wasSessionWillCloseListenerCalled',
+        {},
       );
 
   _i2.Stream<int> intStreamFromValue(int value) =>
@@ -1879,6 +2014,22 @@ class EndpointServerOnlyScopedFieldModel extends _i1.EndpointRef {
 }
 
 /// {@category Endpoint}
+class EndpointServerOnlyScopedFieldChildModel extends _i1.EndpointRef {
+  EndpointServerOnlyScopedFieldChildModel(_i1.EndpointCaller caller)
+      : super(caller);
+
+  @override
+  String get name => 'serverOnlyScopedFieldChildModel';
+
+  _i2.Future<_i20.ScopeServerOnlyFieldChild> getProtocolField() =>
+      caller.callServerEndpoint<_i20.ScopeServerOnlyFieldChild>(
+        'serverOnlyScopedFieldChildModel',
+        'getProtocolField',
+        {},
+      );
+}
+
+/// {@category Endpoint}
 class EndpointSignInRequired extends _i1.EndpointRef {
   EndpointSignInRequired(_i1.EndpointCaller caller) : super(caller);
 
@@ -2055,6 +2206,16 @@ class EndpointTestTools extends _i1.EndpointRef {
         {'numbers': numbers},
       );
 
+  _i2.Future<List<_i10.SimpleData>> returnsSimpleDataListFromInputStream(
+          _i2.Stream<_i10.SimpleData> simpleDatas) =>
+      caller.callStreamingServerEndpoint<_i2.Future<List<_i10.SimpleData>>,
+          List<_i10.SimpleData>>(
+        'testTools',
+        'returnsSimpleDataListFromInputStream',
+        {},
+        {'simpleDatas': simpleDatas},
+      );
+
   _i2.Stream<int> returnsStreamFromInputStream(_i2.Stream<int> numbers) =>
       caller.callStreamingServerEndpoint<_i2.Stream<int>, int>(
         'testTools',
@@ -2098,6 +2259,42 @@ class EndpointTestTools extends _i1.EndpointRef {
         'testTools',
         'getAllSimpleData',
         {},
+      );
+
+  _i2.Future<void> createSimpleDatasInsideTransactions(int data) =>
+      caller.callServerEndpoint<void>(
+        'testTools',
+        'createSimpleDatasInsideTransactions',
+        {'data': data},
+      );
+
+  _i2.Future<void> createSimpleDataAndThrowInsideTransaction(int data) =>
+      caller.callServerEndpoint<void>(
+        'testTools',
+        'createSimpleDataAndThrowInsideTransaction',
+        {'data': data},
+      );
+
+  _i2.Future<void> createSimpleDatasInParallelTransactionCalls() =>
+      caller.callServerEndpoint<void>(
+        'testTools',
+        'createSimpleDatasInParallelTransactionCalls',
+        {},
+      );
+
+  _i2.Future<_i10.SimpleData> echoSimpleData(_i10.SimpleData simpleData) =>
+      caller.callServerEndpoint<_i10.SimpleData>(
+        'testTools',
+        'echoSimpleData',
+        {'simpleData': simpleData},
+      );
+
+  _i2.Future<List<_i10.SimpleData>> echoSimpleDatas(
+          List<_i10.SimpleData> simpleDatas) =>
+      caller.callServerEndpoint<List<_i10.SimpleData>>(
+        'testTools',
+        'echoSimpleDatas',
+        {'simpleDatas': simpleDatas},
       );
 }
 
@@ -2167,7 +2364,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
           host,
-          _i20.Protocol(),
+          _i21.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,
@@ -2199,6 +2396,7 @@ class Client extends _i1.ServerpodClientShared {
     streamQueryLogging = EndpointStreamQueryLogging(this);
     loggingDisabled = EndpointLoggingDisabled(this);
     mapParameters = EndpointMapParameters(this);
+    methodSignaturePermutations = EndpointMethodSignaturePermutations(this);
     methodStreaming = EndpointMethodStreaming(this);
     authenticatedMethodStreaming = EndpointAuthenticatedMethodStreaming(this);
     moduleSerialization = EndpointModuleSerialization(this);
@@ -2206,6 +2404,8 @@ class Client extends _i1.ServerpodClientShared {
     optionalParameters = EndpointOptionalParameters(this);
     redis = EndpointRedis(this);
     serverOnlyScopedFieldModel = EndpointServerOnlyScopedFieldModel(this);
+    serverOnlyScopedFieldChildModel =
+        EndpointServerOnlyScopedFieldChildModel(this);
     signInRequired = EndpointSignInRequired(this);
     adminScopeRequired = EndpointAdminScopeRequired(this);
     simple = EndpointSimple(this);
@@ -2262,6 +2462,8 @@ class Client extends _i1.ServerpodClientShared {
 
   late final EndpointMapParameters mapParameters;
 
+  late final EndpointMethodSignaturePermutations methodSignaturePermutations;
+
   late final EndpointMethodStreaming methodStreaming;
 
   late final EndpointAuthenticatedMethodStreaming authenticatedMethodStreaming;
@@ -2275,6 +2477,9 @@ class Client extends _i1.ServerpodClientShared {
   late final EndpointRedis redis;
 
   late final EndpointServerOnlyScopedFieldModel serverOnlyScopedFieldModel;
+
+  late final EndpointServerOnlyScopedFieldChildModel
+      serverOnlyScopedFieldChildModel;
 
   late final EndpointSignInRequired signInRequired;
 
@@ -2320,6 +2525,7 @@ class Client extends _i1.ServerpodClientShared {
         'streamQueryLogging': streamQueryLogging,
         'loggingDisabled': loggingDisabled,
         'mapParameters': mapParameters,
+        'methodSignaturePermutations': methodSignaturePermutations,
         'methodStreaming': methodStreaming,
         'authenticatedMethodStreaming': authenticatedMethodStreaming,
         'moduleSerialization': moduleSerialization,
@@ -2327,6 +2533,7 @@ class Client extends _i1.ServerpodClientShared {
         'optionalParameters': optionalParameters,
         'redis': redis,
         'serverOnlyScopedFieldModel': serverOnlyScopedFieldModel,
+        'serverOnlyScopedFieldChildModel': serverOnlyScopedFieldChildModel,
         'signInRequired': signInRequired,
         'adminScopeRequired': adminScopeRequired,
         'simple': simple,

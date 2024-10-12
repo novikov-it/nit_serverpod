@@ -1,4 +1,6 @@
 import 'package:serverpod/serverpod.dart';
+import 'package:serverpod_test/src/test_database_proxy.dart';
+import 'package:serverpod_test/src/transaction_manager.dart';
 import 'package:serverpod_test/src/with_serverpod.dart';
 
 /// Internal test endpoints interface that contains implementation details
@@ -16,7 +18,32 @@ abstract interface class InternalTestEndpoints {
 class InternalServerpodSession extends Session {
   /// The transaction that is used by the session.
   @override
-  Transaction? transaction;
+  Transaction? get transaction {
+    var localTransactionManager = transactionManager;
+    if (localTransactionManager == null) {
+      throw StateError(
+          'Database is not enabled for this project, but transaction was accessed.');
+    }
+    return localTransactionManager.currentTransaction;
+  }
+
+  @override
+  TestDatabaseProxy get db {
+    var localDbProxy = _dbProxy;
+    if (localDbProxy == null) {
+      throw StateError(
+          'Database is not enabled for this project, but db was accessed.');
+    }
+    return localDbProxy;
+  }
+
+  late final TestDatabaseProxy? _dbProxy;
+
+  /// The database test configuration.
+  final RollbackDatabase rollbackDatabase;
+
+  /// The transaction manager to manage the Serverpod session's transactions.
+  late final TransactionManager? transactionManager;
 
   /// Creates a new internal serverpod session.
   InternalServerpodSession({
@@ -24,8 +51,26 @@ class InternalServerpodSession extends Session {
     required super.method,
     required super.server,
     required super.enableLogging,
-    this.transaction,
-  });
+    required this.rollbackDatabase,
+    required bool isDatabaseEnabled,
+    TransactionManager? transactionManager,
+  }) {
+    if (!isDatabaseEnabled) {
+      this.transactionManager = null;
+      _dbProxy = null;
+      return;
+    }
+
+    var localTransactionManager =
+        transactionManager ?? TransactionManager(this);
+    _dbProxy = TestDatabaseProxy(
+      super.db,
+      rollbackDatabase,
+      localTransactionManager,
+    );
+
+    this.transactionManager = localTransactionManager;
+  }
 }
 
 List<String> _getServerpodStartUpArgs(String? runMode, bool? applyMigrations) =>
@@ -42,13 +87,17 @@ class TestServerpod<T extends InternalTestEndpoints> {
 
   final Serverpod _serverpod;
 
+  /// Whether the database is enabled and supported by the project configuration.
+  final bool isDatabaseEnabled;
+
   /// Creates a new test serverpod instance.
   TestServerpod({
-    required this.testEndpoints,
-    required SerializationManagerServer serializationManager,
-    required EndpointDispatch endpoints,
-    String? runMode,
     bool? applyMigrations,
+    required EndpointDispatch endpoints,
+    required SerializationManagerServer serializationManager,
+    required this.isDatabaseEnabled,
+    required this.testEndpoints,
+    String? runMode,
   }) : _serverpod = Serverpod(
           _getServerpodStartUpArgs(
             runMode,
@@ -84,16 +133,19 @@ class TestServerpod<T extends InternalTestEndpoints> {
   /// Creates a new Serverpod session.
   InternalServerpodSession createSession({
     bool enableLogging = false,
-    Transaction? transaction,
+    required RollbackDatabase rollbackDatabase,
     String endpoint = '',
     String method = '',
+    TransactionManager? transactionManager,
   }) {
     return InternalServerpodSession(
       server: _serverpod.server,
       enableLogging: enableLogging,
       endpoint: endpoint,
       method: method,
-      transaction: transaction,
+      rollbackDatabase: rollbackDatabase,
+      transactionManager: transactionManager,
+      isDatabaseEnabled: isDatabaseEnabled,
     );
   }
 }

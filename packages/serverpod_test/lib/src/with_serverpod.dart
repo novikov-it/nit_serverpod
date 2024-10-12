@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 
 import 'test_serverpod.dart';
-import 'test_session.dart';
+import 'test_session_builder.dart';
 import 'test_stream_manager.dart';
 import 'transaction_manager.dart';
 
@@ -21,14 +21,18 @@ class InitializationException implements Exception {
   }
 }
 
-/// Options for when to reset the test session and recreate
-/// the underlying Serverpod session during the test lifecycle.
-enum ResetTestSessions {
-  /// After each test. This is the default.
-  afterEach,
+/// Thrown when an invalid configuration state is found.
+class InvalidConfigurationException implements Exception {
+  /// The error message.
+  final String message;
 
-  /// After all tests.
-  afterAll,
+  /// Creates a new initialization exception.
+  InvalidConfigurationException(this.message);
+
+  @override
+  String toString() {
+    return message;
+  }
 }
 
 /// Options for when to rollback the database during the test lifecycle.
@@ -39,14 +43,14 @@ enum RollbackDatabase {
   /// After all tests.
   afterAll,
 
-  /// Never rollback the database.
-  never,
+  /// Disable rolling back the database.
+  disabled,
 }
 
 /// The test closure that is called by the `withServerpod` test helper.
 typedef TestClosure<T> = void Function(
+  TestSessionBuilder testSession,
   T endpoints,
-  TestSession testSession,
 );
 
 /// Builds the `withServerpod` test helper.
@@ -56,55 +60,75 @@ void Function(TestClosure<T>)
     buildWithServerpod<T extends InternalTestEndpoints>(
   String testGroupName,
   TestServerpod<T> testServerpod, {
-  ResetTestSessions? maybeResetTestSessions,
   RollbackDatabase? maybeRollbackDatabase,
   bool? maybeEnableSessionLogging,
 }) {
-  var resetTestSessions = maybeResetTestSessions ?? ResetTestSessions.afterEach;
   var rollbackDatabase = maybeRollbackDatabase ?? RollbackDatabase.afterEach;
-  List<InternalTestSession> allTestSessions = [];
+
+  var rollbacksEnabled = rollbackDatabase != RollbackDatabase.disabled;
+  if (rollbacksEnabled && !testServerpod.isDatabaseEnabled) {
+    throw InitializationException(
+      'Rollbacks where enabled but the database is not enabled in for this project configuration.',
+    );
+  }
+
+  var mainServerpodSession = testServerpod.createSession(
+    rollbackDatabase: rollbackDatabase,
+  );
+
   TransactionManager? transactionManager;
+  if (testServerpod.isDatabaseEnabled) {
+    transactionManager = mainServerpodSession.transactionManager;
+    if (transactionManager == null) {
+      throw InitializationException(
+        'The transaction manager is null but database is enabled.',
+      );
+    }
+  }
+
+  TransactionManager getTransactionManager() {
+    var localTransactionManager = transactionManager;
+    if (localTransactionManager == null) {
+      throw StateError(
+        'The transaction manager is null.',
+      );
+    }
+
+    return localTransactionManager;
+  }
+
+  List<InternalServerpodSession> allTestSessions = [];
+
+  InternalTestSessionBuilder mainTestSessionBuilder =
+      InternalTestSessionBuilder(
+    testServerpod,
+    allTestSessions: allTestSessions,
+    enableLogging: maybeEnableSessionLogging ?? false,
+    mainServerpodSession: mainServerpodSession,
+  );
 
   return (
     TestClosure<T> testClosure,
   ) {
     group(testGroupName, () {
-      InternalTestSession mainTestSession = InternalTestSession(
-        testServerpod,
-        allTestSessions: allTestSessions,
-        enableLogging: maybeEnableSessionLogging ?? false,
-        serverpodSession: testServerpod.createSession(),
-      );
-
       setUpAll(() async {
         await testServerpod.start();
-        var localTransactionManager =
-            TransactionManager(mainTestSession.serverpodSession);
-        transactionManager = localTransactionManager;
 
         if (rollbackDatabase == RollbackDatabase.afterAll ||
             rollbackDatabase == RollbackDatabase.afterEach) {
-          mainTestSession.transaction =
-              await localTransactionManager.createTransaction();
-          await localTransactionManager.pushSavePoint();
+          var localTransactionManager = getTransactionManager();
+
+          await localTransactionManager.createTransaction();
+          await localTransactionManager.addSavePoint();
         }
       });
 
       tearDown(() async {
-        var localTransactionManager = transactionManager;
-        if (localTransactionManager == null) {
-          throw StateError('Transaction manager is null.');
-        }
-
         if (rollbackDatabase == RollbackDatabase.afterEach) {
-          await localTransactionManager.popSavePoint();
-          await localTransactionManager.pushSavePoint();
-        }
+          var localTransactionManager = getTransactionManager();
 
-        if (resetTestSessions == ResetTestSessions.afterEach) {
-          for (var testSession in allTestSessions) {
-            await testSession.resetState();
-          }
+          await localTransactionManager.rollbackToPreviousSavePoint();
+          await localTransactionManager.addSavePoint();
         }
 
         await GlobalStreamManager.closeAllStreams();
@@ -113,18 +137,20 @@ void Function(TestClosure<T>)
       tearDownAll(() async {
         if (rollbackDatabase == RollbackDatabase.afterAll ||
             rollbackDatabase == RollbackDatabase.afterEach) {
-          await transactionManager?.cancelTransaction();
+          var localTransactionManager = getTransactionManager();
+
+          await localTransactionManager.cancelTransaction();
         }
 
         for (var testSession in allTestSessions) {
-          await testSession.destroy();
+          await testSession.close();
         }
         allTestSessions.clear();
 
         await testServerpod.shutdown();
       });
 
-      testClosure(testServerpod.testEndpoints, mainTestSession);
+      testClosure(mainTestSessionBuilder, testServerpod.testEndpoints);
     });
   };
 }

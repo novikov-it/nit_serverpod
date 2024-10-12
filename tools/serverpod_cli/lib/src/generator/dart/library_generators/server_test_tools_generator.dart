@@ -96,7 +96,7 @@ class ServerTestToolsGenerator {
       (methodBuilder) {
         bool returnsStream = method.returnType.isStreamType;
         bool hasStreamParameter =
-            method.parameters.any((p) => p.type.isStreamType);
+            method.allParameters.any((p) => p.type.isStreamType);
 
         methodBuilder
           ..name = method.name
@@ -106,14 +106,31 @@ class ServerTestToolsGenerator {
             [
               Parameter(
                 (p) => p
-                  ..name = 'session'
-                  ..type = refer('TestSession', serverpodTestUrl),
+                  ..name = 'sessionBuilder'
+                  ..type = refer('TestSessionBuilder', serverpodTestUrl),
               ),
               for (var parameter in method.parameters)
+                Parameter((p) => p
+                  ..name = parameter.name
+                  ..type = parameter.type.reference(true, config: config)),
+            ],
+          )
+          ..optionalParameters.addAll(
+            [
+              for (var parameter in method.parametersPositional)
                 Parameter(
                   (p) => p
                     ..name = parameter.name
-                    ..type = parameter.type.reference(true, config: config),
+                    ..type = parameter.type.reference(true, config: config)
+                    ..named = false,
+                ),
+              for (var parameter in method.parametersNamed)
+                Parameter(
+                  (p) => p
+                    ..name = parameter.name
+                    ..type = parameter.type.reference(true, config: config)
+                    ..named = true
+                    ..required = parameter.required,
                 ),
             ],
           );
@@ -134,13 +151,13 @@ class ServerTestToolsGenerator {
         ..modifier = MethodModifier.async
         ..body = Block.of([
           refer('var _localUniqueSession')
-              .assign(refer('session')
-                  .asA(refer('InternalTestSession', serverpodTestUrl))
-                  .property('copyWith')
+              .assign(refer('sessionBuilder')
+                  .asA(refer('InternalTestSessionBuilder', serverpodTestUrl))
+                  .property('internalBuild')
                   .call([], {
                 'endpoint': literalString(endpoint.name),
                 'method': literalString(method.name),
-              }).asA(refer('InternalTestSession', serverpodTestUrl)))
+              }))
               .statement,
           refer('var _localCallContext')
               .assign(refer('_endpointDispatch')
@@ -151,28 +168,37 @@ class ServerTestToolsGenerator {
                   ..requiredParameters.add(
                     Parameter((p) => p..name = '_'),
                   )
-                  ..body = refer('_localUniqueSession')
-                      .property('serverpodSession')
-                      .code).closure,
+                  ..body = refer('_localUniqueSession').code).closure,
                 'endpointPath': literalString(endpoint.name),
                 'methodName': literalString(method.name),
-                'parameters': literalMap({
-                  for (var parameter in method.parameters)
-                    literalString(parameter.name): refer(parameter.name).code,
-                }),
+                'parameters': refer('testObjectToJson', serverpodTestUrl).call([
+                  literalMap({
+                    for (var parameter in method.allParameters)
+                      literalString(parameter.name): refer(parameter.name).code,
+                  })
+                ]),
                 'serializationManager': refer('_serializationManager'),
               }))
               .statement,
-          refer('_localCallContext')
-              .property('method')
-              .property('call')
-              .call([
-                refer('_localUniqueSession').property('serverpodSession'),
-                refer('_localCallContext').property('arguments'),
-              ])
-              .asA(method.returnType.reference(true, config: config))
-              .returned
+          refer('var _localReturnValue')
+              .assign(
+                refer('_localCallContext')
+                    .property('method')
+                    .property('call')
+                    .call([
+                      refer('_localUniqueSession'),
+                      refer('_localCallContext').property('arguments'),
+                    ])
+                    .asA(method.returnType.reference(true, config: config))
+                    .awaited,
+              )
               .statement,
+          refer('_localUniqueSession')
+              .property('close')
+              .call([])
+              .awaited
+              .statement,
+          refer('_localReturnValue').returned.statement,
         ])
         ..returns,
     ).closure;
@@ -190,24 +216,22 @@ class ServerTestToolsGenerator {
     required returnsStream,
   }) {
     var parameters =
-        method.parameters.where((p) => !p.type.isStreamType).toList();
+        method.allParameters.where((p) => !p.type.isStreamType).toList();
     var streamParameters =
-        method.parameters.where((p) => p.type.isStreamType).toList();
+        method.allParameters.where((p) => p.type.isStreamType).toList();
 
     var closure = Method(
       (methodBuilder) => methodBuilder
         ..modifier = MethodModifier.async
         ..body = Block.of([
           refer('var _localUniqueSession')
-              .assign(refer('session')
-                  .asA(refer('InternalTestSession', serverpodTestUrl))
-                  .property('copyWith')
+              .assign(refer('sessionBuilder')
+                  .asA(refer('InternalTestSessionBuilder', serverpodTestUrl))
+                  .property('internalBuild')
                   .call([], {
-                    'endpoint': literalString(endpoint.name),
-                    'method': literalString(method.name),
-                  })
-                  .awaited
-                  .asA(refer('InternalTestSession', serverpodTestUrl)))
+                'endpoint': literalString(endpoint.name),
+                'method': literalString(method.name),
+              }))
               .statement,
           refer('var _localCallContext')
               .assign(refer('_endpointDispatch')
@@ -218,9 +242,7 @@ class ServerTestToolsGenerator {
                   ..requiredParameters.add(
                     Parameter((p) => p..name = '_'),
                   )
-                  ..body = refer('_localUniqueSession')
-                      .property('serverpodSession')
-                      .code).closure,
+                  ..body = refer('_localUniqueSession').code).closure,
                 'endpointPath': literalString(endpoint.name),
                 'methodName': literalString(method.name),
                 'arguments': literalMap({
@@ -236,7 +258,7 @@ class ServerTestToolsGenerator {
               .property('callStreamMethod')
               .call([
                 refer('_localCallContext'),
-                refer('_localUniqueSession').property('serverpodSession'),
+                refer('_localUniqueSession'),
                 literalMap({
                   for (var parameter in streamParameters)
                     literalString(parameter.name): refer(parameter.name).code,
@@ -373,14 +395,6 @@ class ServerTestToolsGenerator {
         ])
         ..optionalParameters.addAll([
           Parameter((p) => p
-            ..name = 'resetTestSessions'
-            ..named = true
-            ..type = refer('ResetTestSessions?', serverpodTestUrl)),
-          Parameter((p) => p
-            ..name = 'rollbackDatabase'
-            ..named = true
-            ..type = refer('RollbackDatabase?', serverpodTestUrl)),
-          Parameter((p) => p
             ..name = 'runMode'
             ..named = true
             ..type = refer('String?')),
@@ -388,11 +402,16 @@ class ServerTestToolsGenerator {
             ..name = 'enableSessionLogging'
             ..named = true
             ..type = refer('bool?')),
-          if (config.isFeatureEnabled(ServerpodFeature.database))
+          if (config.isFeatureEnabled(ServerpodFeature.database)) ...[
+            Parameter((p) => p
+              ..name = 'rollbackDatabase'
+              ..named = true
+              ..type = refer('RollbackDatabase?', serverpodTestUrl)),
             Parameter((p) => p
               ..name = 'applyMigrations'
               ..named = true
-              ..type = refer('bool?')),
+              ..type = refer('bool?'))
+          ],
         ])
         ..body = refer(
                 'buildWithServerpod<_InternalTestEndpoints>', serverpodTestUrl)
@@ -411,12 +430,17 @@ class ServerTestToolsGenerator {
                     config.isFeatureEnabled(ServerpodFeature.database)
                         ? refer('applyMigrations')
                         : literalBool(false),
+                'isDatabaseEnabled': literalBool(
+                  config.isFeatureEnabled(ServerpodFeature.database),
+                ),
               },
             ),
           ],
           {
-            'maybeResetTestSessions': refer('resetTestSessions'),
-            'maybeRollbackDatabase': refer('rollbackDatabase'),
+            'maybeRollbackDatabase':
+                config.isFeatureEnabled(ServerpodFeature.database)
+                    ? refer('rollbackDatabase')
+                    : literalNull,
             'maybeEnableSessionLogging': refer('enableSessionLogging'),
           },
         ).call([
@@ -438,16 +462,9 @@ class ServerTestToolsGenerator {
     library.directives.addAll([
       Directive.import(protocolPackageImportPath),
       Directive.import(endpointsPath),
-      Directive.export(serverpodTestUrl, show: const [
-        'TestSession',
-        'ConnectionClosedException',
-        'ServerpodUnauthenticatedException',
-        'ServerpodInsufficientAccessException',
-        'RollbackDatabase',
-        'ResetTestSessions',
-        'flushMicrotasks',
-        'AuthenticationOverride',
-      ]),
+      Directive.export(serverpodTestPublicExportsUrl),
     ]);
+
+    library.ignoreForFile.add('no_leading_underscores_for_local_identifiers');
   }
 }
