@@ -11,13 +11,13 @@ dependencies:
   flutter:
     sdk: flutter
   email_validator: '>=2.1.17 <4.0.0'
-  serverpod_auth_client: 2.1.2
-  serverpod_auth_shared_flutter: 2.1.2
+  serverpod_auth_client: 2.1.4
+  serverpod_auth_shared_flutter: 2.1.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  serverpod_lints: 2.1.2
+  serverpod_lints: 2.1.4
 
 dependency_overrides:
   serverpod_auth_client:
