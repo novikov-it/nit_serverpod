@@ -135,11 +135,14 @@ class PhonesAuth {
     );
 
     try {
-      await phoneAuthConfig.sendValidationOTP!(
-        session,
-        number,
-        otp,
-      );
+      if (phoneAuthConfig.sendValidationOTP != null) {
+        // NiT: добавить проверку возвращаемого значения
+        await phoneAuthConfig.sendValidationOTP!(
+          session,
+          number,
+          otp,
+        );
+      }
 
       var expirationTime = _getHashExpirationTime(hash);
       if (expirationTime == null) return AuthenticationResponse(success: false);
