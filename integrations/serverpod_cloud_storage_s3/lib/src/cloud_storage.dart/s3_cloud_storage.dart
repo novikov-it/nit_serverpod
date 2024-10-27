@@ -61,7 +61,7 @@ class S3CloudStorage extends CloudStorage {
 
     this.publicHost = publicHost ?? '$bucket.s3.$region.amazonaws.com';
     endpoint = publicHost != null
-        ? 'https://$yandexCloudHost/$bucket/'
+        ? 'https://$yandexCloudHost/$bucket'
         : this.publicHost;
   }
 
