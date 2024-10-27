@@ -12,6 +12,7 @@ class S3CloudStorage extends CloudStorage {
   final String bucket;
   final bool public;
   late final String publicHost;
+  late final String endpoint;
 
   late final AwsS3Client _s3Client;
 
@@ -59,6 +60,9 @@ class S3CloudStorage extends CloudStorage {
     );
 
     this.publicHost = publicHost ?? '$bucket.s3.$region.amazonaws.com';
+    endpoint = publicHost != null
+        ? 'https://$yandexCloudHost/$bucket/'
+        : this.publicHost;
   }
 
   @override
@@ -73,7 +77,7 @@ class S3CloudStorage extends CloudStorage {
       accessKey: _awsAccessKeyId,
       secretKey: _awsSecretKey,
       bucket: bucket,
-      endpoint: publicHost,
+      endpoint: endpoint,
       region: region,
       data: byteData,
       uploadDst: path,
@@ -99,7 +103,7 @@ class S3CloudStorage extends CloudStorage {
     required String path,
   }) async {
     if (await fileExists(session: session, path: path)) {
-      return Uri.parse('https://$publicHost/$bucket/$path');
+      return Uri.parse('https://$endpoint/$path');
     }
     return null;
   }
@@ -132,7 +136,7 @@ class S3CloudStorage extends CloudStorage {
       accessKey: _awsAccessKeyId,
       secretKey: _awsSecretKey,
       bucket: bucket,
-      endpoint: publicHost,
+      endpoint: endpoint,
       region: region,
       uploadDst: path,
       expires: expirationDuration,
