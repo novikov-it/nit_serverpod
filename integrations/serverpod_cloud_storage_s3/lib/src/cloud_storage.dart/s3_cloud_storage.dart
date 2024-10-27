@@ -15,6 +15,12 @@ class S3CloudStorage extends CloudStorage {
 
   late final AwsS3Client _s3Client;
 
+  static const yandexCloudHost = 'storage.yandexcloud.net';
+
+  get endpoint => publicHost == yandexCloudHost
+      ? 'https://$yandexCloudHost/$bucket/'
+      : 'https://$bucket.s3-$region.amazonaws.com';
+
   /// Creates a new [S3CloudStorage] reference.
   S3CloudStorage({
     required Serverpod serverpod,
@@ -66,6 +72,7 @@ class S3CloudStorage extends CloudStorage {
       accessKey: _awsAccessKeyId,
       secretKey: _awsSecretKey,
       bucket: bucket,
+      endpoint: endpoint,
       region: region,
       data: byteData,
       uploadDst: path,
@@ -124,6 +131,7 @@ class S3CloudStorage extends CloudStorage {
       accessKey: _awsAccessKeyId,
       secretKey: _awsSecretKey,
       bucket: bucket,
+      endpoint: endpoint,
       region: region,
       uploadDst: path,
       expires: expirationDuration,

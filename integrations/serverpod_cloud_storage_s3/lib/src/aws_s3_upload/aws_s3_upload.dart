@@ -22,6 +22,7 @@ class AwsS3Uploader {
 
     /// The name of the S3 storage bucket to upload  to
     required String bucket,
+    required String endpoint,
 
     /// The file to upload
     required File file,
@@ -32,8 +33,6 @@ class AwsS3Uploader {
     /// The AWS region. Must be formatted correctly, e.g. us-west-1
     required String region,
   }) async {
-    final endpoint = 'https://$bucket.s3-$region.amazonaws.com';
-
     final stream = http.ByteStream(Stream.castFrom(file.openRead()));
     final length = await file.length();
 
@@ -86,6 +85,7 @@ class AwsS3Uploader {
 
     /// The name of the S3 storage bucket to upload  to
     required String bucket,
+    required String endpoint,
 
     /// The file to upload
     required ByteData data,
@@ -100,7 +100,6 @@ class AwsS3Uploader {
     required String uploadDst,
     bool public = true,
   }) async {
-    final endpoint = 'https://$bucket.s3-$region.amazonaws.com';
     // final uploadDest = '$destDir/${filename ?? path.basename(file.path)}';
 
     final stream = http.ByteStream.fromBytes(data.buffer.asUint8List());
@@ -155,6 +154,7 @@ class AwsS3Uploader {
 
     /// The name of the S3 storage bucket to upload  to
     required String bucket,
+    required String endpoint,
 
     /// The file to upload
     // required ByteData data,
@@ -171,8 +171,6 @@ class AwsS3Uploader {
     int maxFileSize = 10 * 1024 * 1024,
     bool public = true,
   }) async {
-    final endpoint = 'https://$bucket.s3-$region.amazonaws.com';
-
     final policy = Policy.fromS3PresignedPost(
       uploadDst,
       bucket,
