@@ -60,9 +60,8 @@ class S3CloudStorage extends CloudStorage {
     );
 
     this.publicHost = publicHost ?? '$bucket.s3.$region.amazonaws.com';
-    endpoint = publicHost != null
-        ? 'https://$yandexCloudHost/$bucket'
-        : this.publicHost;
+    endpoint =
+        publicHost != null ? 'https://$publicHost/$bucket' : this.publicHost;
   }
 
   @override
@@ -103,7 +102,7 @@ class S3CloudStorage extends CloudStorage {
     required String path,
   }) async {
     if (await fileExists(session: session, path: path)) {
-      return Uri.parse('https://$endpoint/$path');
+      return Uri.parse('$endpoint/$path');
     }
     return null;
   }
