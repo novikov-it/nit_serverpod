@@ -26,6 +26,9 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
     this.clientMessageId,
     this.sent,
     this.attachments,
+    this.reactions,
+    this.reactionsUsers,
+    this.replyMessages,
   });
 
   factory ChatMessage({
@@ -39,6 +42,9 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
     int? clientMessageId,
     bool? sent,
     List<_i3.ChatMessageAttachment>? attachments,
+    List<String>? reactions,
+    List<String>? reactionsUsers,
+    Map<String, String>? replyMessages,
   }) = _ChatMessageImpl;
 
   factory ChatMessage.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -59,6 +65,17 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
           ?.map((e) =>
               _i3.ChatMessageAttachment.fromJson((e as Map<String, dynamic>)))
           .toList(),
+      reactions: (jsonSerialization['reactions'] as List?)
+          ?.map((e) => e as String)
+          .toList(),
+      reactionsUsers: (jsonSerialization['reactionsUsers'] as List?)
+          ?.map((e) => e as String)
+          .toList(),
+      replyMessages:
+          (jsonSerialization['replyMessages'] as Map?)?.map((k, v) => MapEntry(
+                k as String,
+                v as String,
+              )),
     );
   }
 
@@ -96,6 +113,15 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
   /// List of attachments associated with this message.
   List<_i3.ChatMessageAttachment>? attachments;
 
+  /// The reactions of the message
+  List<String>? reactions;
+
+  /// The users who reacted
+  List<String>? reactionsUsers;
+
+  /// The reply messages
+  Map<String, String>? replyMessages;
+
   @override
   _i1.Table get table => t;
 
@@ -110,6 +136,9 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
     int? clientMessageId,
     bool? sent,
     List<_i3.ChatMessageAttachment>? attachments,
+    List<String>? reactions,
+    List<String>? reactionsUsers,
+    Map<String, String>? replyMessages,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -125,6 +154,9 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
       if (sent != null) 'sent': sent,
       if (attachments != null)
         'attachments': attachments?.toJson(valueToJson: (v) => v.toJson()),
+      if (reactions != null) 'reactions': reactions?.toJson(),
+      if (reactionsUsers != null) 'reactionsUsers': reactionsUsers?.toJson(),
+      if (replyMessages != null) 'replyMessages': replyMessages?.toJson(),
     };
   }
 
@@ -143,6 +175,9 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
       if (attachments != null)
         'attachments':
             attachments?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
+      if (reactions != null) 'reactions': reactions?.toJson(),
+      if (reactionsUsers != null) 'reactionsUsers': reactionsUsers?.toJson(),
+      if (replyMessages != null) 'replyMessages': replyMessages?.toJson(),
     };
   }
 
@@ -190,6 +225,9 @@ class _ChatMessageImpl extends ChatMessage {
     int? clientMessageId,
     bool? sent,
     List<_i3.ChatMessageAttachment>? attachments,
+    List<String>? reactions,
+    List<String>? reactionsUsers,
+    Map<String, String>? replyMessages,
   }) : super._(
           id: id,
           channel: channel,
@@ -201,6 +239,9 @@ class _ChatMessageImpl extends ChatMessage {
           clientMessageId: clientMessageId,
           sent: sent,
           attachments: attachments,
+          reactions: reactions,
+          reactionsUsers: reactionsUsers,
+          replyMessages: replyMessages,
         );
 
   @override
@@ -215,6 +256,9 @@ class _ChatMessageImpl extends ChatMessage {
     Object? clientMessageId = _Undefined,
     Object? sent = _Undefined,
     Object? attachments = _Undefined,
+    Object? reactions = _Undefined,
+    Object? reactionsUsers = _Undefined,
+    Object? replyMessages = _Undefined,
   }) {
     return ChatMessage(
       id: id is int? ? id : this.id,
@@ -232,6 +276,22 @@ class _ChatMessageImpl extends ChatMessage {
       attachments: attachments is List<_i3.ChatMessageAttachment>?
           ? attachments
           : this.attachments?.map((e0) => e0.copyWith()).toList(),
+      reactions: reactions is List<String>?
+          ? reactions
+          : this.reactions?.map((e0) => e0).toList(),
+      reactionsUsers: reactionsUsers is List<String>?
+          ? reactionsUsers
+          : this.reactionsUsers?.map((e0) => e0).toList(),
+      replyMessages: replyMessages is Map<String, String>?
+          ? replyMessages
+          : this.replyMessages?.map((
+                key0,
+                value0,
+              ) =>
+                  MapEntry(
+                    key0,
+                    value0,
+                  )),
     );
   }
 }
@@ -263,6 +323,18 @@ class ChatMessageTable extends _i1.Table {
       'attachments',
       this,
     );
+    reactions = _i1.ColumnSerializable(
+      'reactions',
+      this,
+    );
+    reactionsUsers = _i1.ColumnSerializable(
+      'reactionsUsers',
+      this,
+    );
+    replyMessages = _i1.ColumnSerializable(
+      'replyMessages',
+      this,
+    );
   }
 
   /// The channel this message was posted to.
@@ -283,6 +355,15 @@ class ChatMessageTable extends _i1.Table {
   /// List of attachments associated with this message.
   late final _i1.ColumnSerializable attachments;
 
+  /// The reactions of the message
+  late final _i1.ColumnSerializable reactions;
+
+  /// The users who reacted
+  late final _i1.ColumnSerializable reactionsUsers;
+
+  /// The reply messages
+  late final _i1.ColumnSerializable replyMessages;
+
   @override
   List<_i1.Column> get columns => [
         id,
@@ -292,6 +373,9 @@ class ChatMessageTable extends _i1.Table {
         sender,
         removed,
         attachments,
+        reactions,
+        reactionsUsers,
+        replyMessages,
       ];
 }
 

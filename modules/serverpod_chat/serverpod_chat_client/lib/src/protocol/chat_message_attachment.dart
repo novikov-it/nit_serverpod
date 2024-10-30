@@ -10,6 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'protocol.dart' as _i2;
 
 /// An attachment to a chat message. Typically an image or a file.
 abstract class ChatMessageAttachment implements _i1.SerializableModel {
@@ -20,6 +21,8 @@ abstract class ChatMessageAttachment implements _i1.SerializableModel {
     this.previewImage,
     this.previewWidth,
     this.previewHeight,
+    this.duration,
+    this.attachmentType,
   });
 
   factory ChatMessageAttachment({
@@ -29,6 +32,8 @@ abstract class ChatMessageAttachment implements _i1.SerializableModel {
     String? previewImage,
     int? previewWidth,
     int? previewHeight,
+    int? duration,
+    _i2.ChatAttachmentTypeEnum? attachmentType,
   }) = _ChatMessageAttachmentImpl;
 
   factory ChatMessageAttachment.fromJson(
@@ -40,6 +45,11 @@ abstract class ChatMessageAttachment implements _i1.SerializableModel {
       previewImage: jsonSerialization['previewImage'] as String?,
       previewWidth: jsonSerialization['previewWidth'] as int?,
       previewHeight: jsonSerialization['previewHeight'] as int?,
+      duration: jsonSerialization['duration'] as int?,
+      attachmentType: jsonSerialization['attachmentType'] == null
+          ? null
+          : _i2.ChatAttachmentTypeEnum.fromJson(
+              (jsonSerialization['attachmentType'] as int)),
     );
   }
 
@@ -49,7 +59,7 @@ abstract class ChatMessageAttachment implements _i1.SerializableModel {
   /// The URL to the file.
   String url;
 
-  /// The content type of the file.
+  /// The content type of the file. audio or image.
   String contentType;
 
   /// URL to an image preview of the file, if available.
@@ -61,6 +71,12 @@ abstract class ChatMessageAttachment implements _i1.SerializableModel {
   /// The height of the image preview, if available.
   int? previewHeight;
 
+  /// The duration of the audio file, if available.
+  int? duration;
+
+  /// The type of attachment.
+  _i2.ChatAttachmentTypeEnum? attachmentType;
+
   ChatMessageAttachment copyWith({
     String? fileName,
     String? url,
@@ -68,6 +84,8 @@ abstract class ChatMessageAttachment implements _i1.SerializableModel {
     String? previewImage,
     int? previewWidth,
     int? previewHeight,
+    int? duration,
+    _i2.ChatAttachmentTypeEnum? attachmentType,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -78,6 +96,8 @@ abstract class ChatMessageAttachment implements _i1.SerializableModel {
       if (previewImage != null) 'previewImage': previewImage,
       if (previewWidth != null) 'previewWidth': previewWidth,
       if (previewHeight != null) 'previewHeight': previewHeight,
+      if (duration != null) 'duration': duration,
+      if (attachmentType != null) 'attachmentType': attachmentType?.toJson(),
     };
   }
 
@@ -97,6 +117,8 @@ class _ChatMessageAttachmentImpl extends ChatMessageAttachment {
     String? previewImage,
     int? previewWidth,
     int? previewHeight,
+    int? duration,
+    _i2.ChatAttachmentTypeEnum? attachmentType,
   }) : super._(
           fileName: fileName,
           url: url,
@@ -104,6 +126,8 @@ class _ChatMessageAttachmentImpl extends ChatMessageAttachment {
           previewImage: previewImage,
           previewWidth: previewWidth,
           previewHeight: previewHeight,
+          duration: duration,
+          attachmentType: attachmentType,
         );
 
   @override
@@ -114,6 +138,8 @@ class _ChatMessageAttachmentImpl extends ChatMessageAttachment {
     Object? previewImage = _Undefined,
     Object? previewWidth = _Undefined,
     Object? previewHeight = _Undefined,
+    Object? duration = _Undefined,
+    Object? attachmentType = _Undefined,
   }) {
     return ChatMessageAttachment(
       fileName: fileName ?? this.fileName,
@@ -122,6 +148,10 @@ class _ChatMessageAttachmentImpl extends ChatMessageAttachment {
       previewImage: previewImage is String? ? previewImage : this.previewImage,
       previewWidth: previewWidth is int? ? previewWidth : this.previewWidth,
       previewHeight: previewHeight is int? ? previewHeight : this.previewHeight,
+      duration: duration is int? ? duration : this.duration,
+      attachmentType: attachmentType is _i2.ChatAttachmentTypeEnum?
+          ? attachmentType
+          : this.attachmentType,
     );
   }
 }

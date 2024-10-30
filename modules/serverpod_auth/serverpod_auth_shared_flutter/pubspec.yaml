@@ -15,7 +15,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  serverpod_client: 2.1.2
+  serverpod_client: ^2.1.2
   serverpod_auth_client: 2.1.2
   shared_preferences: ^2.1.0
   cached_network_image: ^3.2.3

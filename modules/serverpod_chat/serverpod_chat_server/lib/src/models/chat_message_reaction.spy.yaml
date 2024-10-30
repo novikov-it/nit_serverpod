@@ -1,0 +1,8 @@
+### A chat message reaction request.
+class: ChatMessageReaction
+fields:
+  ### The channel this message is posted to.
+  messageId: int
+
+  reactions: List<String>?
+  reactionsUsers: List<String>?

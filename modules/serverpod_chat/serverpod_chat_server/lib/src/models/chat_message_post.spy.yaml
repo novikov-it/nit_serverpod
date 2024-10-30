@@ -12,3 +12,5 @@ fields:
 
   ### List of attachments associated with this message.
   attachments: List<ChatMessageAttachment>?
+  replyMessages: Map<String, String>?
+

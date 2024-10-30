@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-
 import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
+
 import 'package:serverpod_chat_client/serverpod_chat_client.dart';
 import 'package:serverpod_chat_flutter/serverpod_chat_flutter.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart' as auth;
@@ -11,6 +11,10 @@ import 'package:serverpod_auth_client/serverpod_auth_client.dart' as auth;
 /// true, the message was added by the current user.
 typedef ChatControllerReceivedMessageCallback = void Function(
     ChatMessage message, bool addedByUser);
+
+typedef ChatControllerReadStatusMessageCallback = void Function(int messageId);
+
+typedef ChatControllerEditMessageCallback = void Function(ChatMessage message);
 
 /// Handles all interaction with a chat channel.
 class ChatController {
@@ -63,9 +67,13 @@ class ChatController {
 
   final _receivedMessageListeners = <ChatControllerReceivedMessageCallback>{};
   final _receivedMessageChunkListeners = <VoidCallback>{};
-  final _messageUpdatedListeners = <VoidCallback>{};
+  final _messageUpdatedListeners = <ChatControllerEditMessageCallback>{};
   final _unreadMessagesListeners = <VoidCallback>{};
   final _connectionStatusListeners = <VoidCallback>{};
+  final _messageReadStatusListeners =
+      <ChatControllerReadStatusMessageCallback>{};
+
+  final _editMessageListeners = <ChatControllerEditMessageCallback>{};
 
   /// The [scrollOffset] of a connected scroll view.
   double scrollOffset = 0;
@@ -74,6 +82,8 @@ class ChatController {
   bool scrollAtBottom = true;
 
   int _lastReadMessage = 0;
+
+  int get lastReadMessageId => _lastReadMessage;
 
   /// Counter for fake IDs for the ephemeral messages
   /// (Used in order to keep track of their read state)
@@ -98,7 +108,7 @@ class ChatController {
 
     // Pick a random number and hope no other client with the same user logged
     // in picks the same. If so, messages may be incorrectly marked as delivered.
-    _clientMessageId = Random().nextInt(10000000);
+    _clientMessageId = -Random().nextInt(10000000);
     dispatch = ChatDispatch.getInstance(module);
     dispatch.addListener(
       this.channel,
@@ -114,17 +124,24 @@ class ChatController {
     _messageUpdatedListeners.clear();
     _unreadMessagesListeners.clear();
     _connectionStatusListeners.clear();
+    _messageReadStatusListeners.clear();
+    _editMessageListeners.clear();
   }
 
   void _handleServerMessage(SerializableModel serverMessage) {
     if (serverMessage is ChatMessage) {
+      if (serverMessage.removed == true) {
+        messages.removeWhere((element) => element.id == serverMessage.id);
+        _notifyMessageListeners(serverMessage, false);
+        return;
+      }
       if (ephemeral && serverMessage.id == null) {
         serverMessage.id = ++_ephemeralMessageId;
       }
 
       // Mark as read if a view is attached and scroll is at bottom.
       if (scrollAtBottom && _receivedMessageListeners.isNotEmpty) {
-        markLastMessageRead();
+        // markLastMessageRead();
       }
 
       var updated = false;
@@ -133,12 +150,13 @@ class ChatController {
         for (var message in messages) {
           if (message.clientMessageId == serverMessage.clientMessageId) {
             message.sent = true;
+            message.replyMessages = serverMessage.replyMessages;
             message.id = serverMessage.id;
             updated = true;
           }
         }
         if (updated) {
-          _notifyMessageUpdatedListeners();
+          _notifyMessageUpdatedListeners(serverMessage);
         }
       }
       if (!updated) {
@@ -152,6 +170,8 @@ class ChatController {
       messages.insertAll(0, serverMessage.messages);
       _postedMessageChunkRequest = false;
       _notifyReceivedMessageChunkListeners();
+    } else if (serverMessage is ChatReadMessage) {
+      _notifyReadStatusListeners(serverMessage.lastReadMessageId);
     } else if (serverMessage is ChatJoinedChannel) {
       messages.addAll(serverMessage.initialMessageChunk.messages);
       _joinedAsUserInfo = serverMessage.userInfo;
@@ -167,10 +187,50 @@ class ChatController {
     }
   }
 
+  /// Sets a reaction on the message with the given [messageId].
+  void setReaction(
+    int messageId, {
+    List<String>? reactions,
+    List<String>? reactionsUsers,
+  }) {
+    final messageIndex =
+        messages.indexWhere((element) => element.id == messageId);
+    if (messageIndex == -1) return;
+    final message = messages[messageIndex];
+
+    messages[messageIndex] = message.copyWith(
+      reactions: reactions,
+      reactionsUsers: reactionsUsers,
+    );
+    dispatch.postMessage(
+      ChatMessageReaction(
+        reactions: reactions,
+        reactionsUsers: reactionsUsers,
+        messageId: messageId,
+      ),
+    );
+  }
+
+  void removeMessage(
+    int messageId,
+  ) {
+    dispatch.postMessage(
+      ChatMessageEdit(
+        messageId: messageId,
+        message: '',
+        removed: true,
+      ),
+    );
+  }
+
   /// Sends a chat message with optional [attachments].
-  void postMessage(String message, [List<ChatMessageAttachment>? attachments]) {
+  int postMessage(
+    String message, [
+    List<ChatMessageAttachment>? attachments,
+    Map<String, String>? replyMessages,
+  ]) {
     if (!sessionManager.isSignedIn && unauthenticatedUserName == null) {
-      return;
+      return -1;
     }
 
     // Send to server
@@ -180,6 +240,7 @@ class ChatController {
         message: message,
         clientMessageId: _clientMessageId,
         attachments: attachments,
+        replyMessages: replyMessages,
       ),
     );
 
@@ -199,15 +260,78 @@ class ChatController {
 
     _notifyMessageListeners(dummy, true);
     _clientMessageId += 1;
+    return _clientMessageId;
+  }
+
+  Future<int> shareAd(
+    int adId,
+  ) async {
+    if (!sessionManager.isSignedIn && unauthenticatedUserName == null) {
+      return -1;
+    }
+    final user = sessionManager.signedInUser;
+
+    final adAttachment = ChatMessageAttachment(
+      fileName: adId.toString(),
+      contentType: '',
+      url: '',
+      attachmentType: ChatAttachmentTypeEnum.adShare,
+    );
+
+    // Send to server
+    await dispatch.postMessage(
+      ChatMessagePost(
+        channel: channel,
+        message: '',
+        clientMessageId: _clientMessageId,
+        attachments: [adAttachment],
+      ),
+    );
+
+    // Post dummy message
+    var dummy = ChatMessage(
+      channel: channel,
+      message: '',
+      time: DateTime.now().toUtc(),
+      sent: false,
+      sender: user!.id!,
+      senderInfo: user.toPublic(),
+      removed: false,
+      clientMessageId: _clientMessageId,
+      attachments: [adAttachment],
+    );
+    messages.add(dummy);
+
+    _notifyMessageListeners(dummy, true);
+    _clientMessageId += 1;
+    return _clientMessageId;
   }
 
   /// Marks last message as read.
-  void markLastMessageRead() {
-    var messageId = _getLastMessageId();
-    if (messageId == null) {
-      return;
-    }
+  // void markLastMessageRead() {
+  //   var messageId = _getLastMessageId();
+  //   if (messageId == null) {
+  //     return;
+  //   }
 
+  //   if (messageId > _lastReadMessage) {
+  //     _lastReadMessage = messageId;
+
+  //     if (!ephemeral) {
+  //       module.chat.sendStreamMessage(
+  //         ChatReadMessage(
+  //           channel: channel,
+  //           userId: sessionManager.signedInUser!.id!,
+  //           lastReadMessageId: messageId,
+  //         ),
+  //       );
+  //     }
+
+  //     _updateUnreadMessages();
+  //   }
+  // }
+
+  void markMessageRead(int messageId) {
     if (messageId > _lastReadMessage) {
       _lastReadMessage = messageId;
 
@@ -226,6 +350,7 @@ class ChatController {
   }
 
   bool _unreadMessagesLast = false;
+
   void _updateUnreadMessages() {
     var hasUnread = hasUnreadMessages;
     if (_unreadMessagesLast != hasUnread) {
@@ -301,18 +426,19 @@ class ChatController {
   // Listeners for updated messages
 
   /// Adds a listener for updates messages.
-  void addMessageUpdatedListener(VoidCallback listener) {
+  void addMessageUpdatedListener(ChatControllerEditMessageCallback listener) {
     _messageUpdatedListeners.add(listener);
   }
 
   /// Removes a listener for updated messages.
-  void removeMessageUpdatedListener(VoidCallback listener) {
+  void removeMessageUpdatedListener(
+      ChatControllerEditMessageCallback listener) {
     _messageUpdatedListeners.remove(listener);
   }
 
-  void _notifyMessageUpdatedListeners() {
+  void _notifyMessageUpdatedListeners(ChatMessage message) {
     for (var listener in _messageUpdatedListeners) {
-      listener();
+      listener(message);
     }
   }
 
@@ -334,6 +460,37 @@ class ChatController {
     }
   }
 
+  /// Listeners for read status
+  void _notifyReadStatusListeners(int messageId) {
+    for (var listener in _messageReadStatusListeners) {
+      listener(messageId);
+    }
+  }
+
+  void addReadStatusListeners(
+      ChatControllerReadStatusMessageCallback listener) {
+    _messageReadStatusListeners.add(listener);
+  }
+
+  void removeReadStatusListeners(
+      ChatControllerReadStatusMessageCallback listener) {
+    _messageReadStatusListeners.remove(listener);
+  }
+
+  /// Listeners for edit status
+  void _notifyEditListeners(ChatMessage message) {
+    for (var listener in _editMessageListeners) {
+      listener(message);
+    }
+  }
+
+  void addEditMessageListener(ChatControllerEditMessageCallback listener) {
+    _editMessageListeners.add(listener);
+  }
+
+  void removeEditMessageListener(ChatControllerEditMessageCallback listener) {
+    _editMessageListeners.remove(listener);
+  }
   // Listeners for unread messages
 
   /// Adds a listener for unread messages.

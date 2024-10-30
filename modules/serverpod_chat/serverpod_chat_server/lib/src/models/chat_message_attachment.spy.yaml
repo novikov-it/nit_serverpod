@@ -7,7 +7,7 @@ fields:
   ### The URL to the file.
   url: String
 
-  ### The content type of the file.
+  ### The content type of the file. audio or image. 
   contentType: String
 
   ### URL to an image preview of the file, if available.
@@ -18,3 +18,9 @@ fields:
 
   ### The height of the image preview, if available.
   previewHeight: int?
+  
+  ### The duration of the audio file, if available.
+  duration: int?
+
+  ### The type of attachment.
+  attachmentType: ChatAttachmentTypeEnum?

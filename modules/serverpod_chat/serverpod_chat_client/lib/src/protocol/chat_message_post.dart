@@ -19,6 +19,7 @@ abstract class ChatMessagePost implements _i1.SerializableModel {
     required this.message,
     required this.clientMessageId,
     this.attachments,
+    this.replyMessages,
   });
 
   factory ChatMessagePost({
@@ -26,6 +27,7 @@ abstract class ChatMessagePost implements _i1.SerializableModel {
     required String message,
     required int clientMessageId,
     List<_i2.ChatMessageAttachment>? attachments,
+    Map<String, String>? replyMessages,
   }) = _ChatMessagePostImpl;
 
   factory ChatMessagePost.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -37,6 +39,11 @@ abstract class ChatMessagePost implements _i1.SerializableModel {
           ?.map((e) =>
               _i2.ChatMessageAttachment.fromJson((e as Map<String, dynamic>)))
           .toList(),
+      replyMessages:
+          (jsonSerialization['replyMessages'] as Map?)?.map((k, v) => MapEntry(
+                k as String,
+                v as String,
+              )),
     );
   }
 
@@ -52,11 +59,14 @@ abstract class ChatMessagePost implements _i1.SerializableModel {
   /// List of attachments associated with this message.
   List<_i2.ChatMessageAttachment>? attachments;
 
+  Map<String, String>? replyMessages;
+
   ChatMessagePost copyWith({
     String? channel,
     String? message,
     int? clientMessageId,
     List<_i2.ChatMessageAttachment>? attachments,
+    Map<String, String>? replyMessages,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -66,6 +76,7 @@ abstract class ChatMessagePost implements _i1.SerializableModel {
       'clientMessageId': clientMessageId,
       if (attachments != null)
         'attachments': attachments?.toJson(valueToJson: (v) => v.toJson()),
+      if (replyMessages != null) 'replyMessages': replyMessages?.toJson(),
     };
   }
 
@@ -83,11 +94,13 @@ class _ChatMessagePostImpl extends ChatMessagePost {
     required String message,
     required int clientMessageId,
     List<_i2.ChatMessageAttachment>? attachments,
+    Map<String, String>? replyMessages,
   }) : super._(
           channel: channel,
           message: message,
           clientMessageId: clientMessageId,
           attachments: attachments,
+          replyMessages: replyMessages,
         );
 
   @override
@@ -96,6 +109,7 @@ class _ChatMessagePostImpl extends ChatMessagePost {
     String? message,
     int? clientMessageId,
     Object? attachments = _Undefined,
+    Object? replyMessages = _Undefined,
   }) {
     return ChatMessagePost(
       channel: channel ?? this.channel,
@@ -104,6 +118,16 @@ class _ChatMessagePostImpl extends ChatMessagePost {
       attachments: attachments is List<_i2.ChatMessageAttachment>?
           ? attachments
           : this.attachments?.map((e0) => e0.copyWith()).toList(),
+      replyMessages: replyMessages is Map<String, String>?
+          ? replyMessages
+          : this.replyMessages?.map((
+                key0,
+                value0,
+              ) =>
+                  MapEntry(
+                    key0,
+                    value0,
+                  )),
     );
   }
 }

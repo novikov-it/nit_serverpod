@@ -44,12 +44,34 @@ class ChatEndpoint extends Endpoint {
     } else {
       setUserObject(session, _ChatSessionInfo());
     }
+    print('stream Opend');
+  }
+
+  Future<_ChatSessionInfo> _setSession(Session session) async {
+    var chatSession = getUserObject(session);
+    if (chatSession == null) {
+      var userId = (await session.authenticated)?.userId;
+
+      if (userId != null) {
+        chatSession = _ChatSessionInfo(
+          userInfo: await Users.findUserByUserId(session, userId),
+        );
+
+        setUserObject(session, chatSession);
+      } else {
+        chatSession = _ChatSessionInfo();
+        setUserObject(session, chatSession);
+      }
+    }
+
+    return chatSession as _ChatSessionInfo;
   }
 
   @override
   Future<void> handleStreamMessage(
       StreamingSession session, SerializableModel message) async {
-    var chatSession = getUserObject(session) as _ChatSessionInfo;
+    print('handle stream ${getUserObject(session)}');
+    var chatSession = await _setSession(session);
 
     if (message is ChatJoinChannel) {
       // Check if unauthenticated users is ok
@@ -72,6 +94,7 @@ class ChatEndpoint extends Endpoint {
           created: DateTime.now().toUtc(),
           scopeNames: [],
           blocked: false,
+          // isOnline: false,
         );
         _tempUserId -= 1;
       }
@@ -150,10 +173,12 @@ class ChatEndpoint extends Endpoint {
         clientMessageId: message.clientMessageId,
         sent: true,
         attachments: message.attachments,
+        replyMessages: message.replyMessages,
       );
 
       if (!_isEphemeralChannel(message.channel)) {
-        await ChatMessage.db.insertRow(session, chatMessage);
+        final inserted = await ChatMessage.db.insertRow(session, chatMessage);
+        chatMessage = chatMessage.copyWith(id: inserted.id);
       }
 
       session.messages.postMessage(
@@ -169,6 +194,51 @@ class ChatEndpoint extends Endpoint {
           message.channel,
         );
       }
+      // final notificationInfo = await NotificationCommon.getAdIdRecivedUserId(
+      //   session,
+      //   message.channel,
+      //   chatSession.userInfo!.id!,
+      // );
+      // await NotificationCommon.newMessageNotification(
+      //   session,
+      //   toUserId: notificationInfo.$1,
+      //   userFromMessageId: chatSession.userInfo!.id!,
+      //   adId: notificationInfo.$2,
+      //   channelName: message.channel,
+      // );
+    } else if (message is ChatMessageReaction) {
+      final reactedMessage =
+          await ChatMessage.db.findById(session, message.messageId);
+
+      reactedMessage?.reactions = message.reactions;
+      reactedMessage?.reactionsUsers = message.reactionsUsers;
+
+      final updatedMessage =
+          await ChatMessage.db.updateRow(session, reactedMessage!);
+      session.log("Updated message: $updatedMessage");
+
+      session.messages.postMessage(
+        _channelPrefix + reactedMessage.channel,
+        reactedMessage,
+        global: ChatConfig.current.postMessagesGlobally,
+      );
+    } else if (message is ChatMessageEdit) {
+      final editedMessage =
+          await ChatMessage.db.findById(session, message.messageId);
+      if (editedMessage == null) {
+        return;
+      }
+      editedMessage.removed = message.removed;
+      editedMessage.attachments = message.attachments;
+      editedMessage.message = message.message;
+
+      await ChatMessage.db.updateRow(session, editedMessage);
+
+      session.messages.postMessage(
+        _channelPrefix + editedMessage.channel,
+        editedMessage,
+        global: ChatConfig.current.postMessagesGlobally,
+      );
     } else if (message is ChatReadMessage) {
       // Check that the message is in a channel we're subscribed to
       if (!chatSession.messageListeners.containsKey(message.channel)) {
@@ -181,6 +251,12 @@ class ChatEndpoint extends Endpoint {
         message.channel,
         chatSession.userInfo!.id!,
         message.lastReadMessageId,
+      );
+
+      session.messages.postMessage(
+        _channelPrefix + message.channel,
+        message,
+        global: ChatConfig.current.postMessagesGlobally,
       );
     } else if (message is ChatRequestMessageChunk) {
       // Check that the message is in a channel we're subscribed to
@@ -209,7 +285,10 @@ class ChatEndpoint extends Endpoint {
     if (lastId != null) {
       messages = await ChatMessage.db.find(
         session,
-        where: (t) => t.channel.equals(channel) & (t.id < lastId),
+        where: (t) =>
+            t.removed.equals(false) &
+            t.channel.equals(channel) &
+            (t.id < lastId),
         orderBy: (t) => t.id,
         orderDescending: true,
         limit: size + 1,
@@ -217,7 +296,7 @@ class ChatEndpoint extends Endpoint {
     } else {
       messages = await ChatMessage.db.find(
         session,
-        where: (t) => t.channel.equals(channel),
+        where: (t) => t.removed.equals(false) & t.channel.equals(channel),
         orderBy: (t) => t.id,
         orderDescending: true,
         limit: size + 1,
@@ -253,7 +332,7 @@ class ChatEndpoint extends Endpoint {
   ) async {
     var readMessageRow = await ChatReadMessage.db.findFirstRow(
       session,
-      where: (t) => t.channel.equals(channel) & t.userId.equals(userId),
+      where: (t) => t.channel.equals(channel) & t.userId.notEquals(userId),
     );
 
     if (readMessageRow == null) {
@@ -314,10 +393,15 @@ class ChatEndpoint extends Endpoint {
     Uri? thumbUrl;
     int? thumbWidth;
     int? thumbHeight;
+    String? mediaType;
 
     try {
       var ext = path.extension(filePath.toLowerCase());
-      if ({'.jpg', '.jpeg', '.png', '.gif'}.contains(ext)) {
+      if ({'.m4a'}.contains(ext)) {
+        mediaType = 'audio';
+      }
+      if ({'.jpg', '.jpeg', '.png'}.contains(ext)) {
+        mediaType = 'image';
         var response = await http.get(url!);
         var bytes = response.bodyBytes;
         // Run thumbnail generation in an isolate, because it is CPU-intensive
@@ -361,7 +445,7 @@ class ChatEndpoint extends Endpoint {
       return ChatMessageAttachment(
         fileName: fileName,
         url: url.toString(),
-        contentType: 'application/octet-stream',
+        contentType: mediaType ?? 'application/octet-stream',
         previewWidth: thumbWidth,
         previewHeight: thumbHeight,
         previewImage: thumbUrl?.toString(),
@@ -380,6 +464,30 @@ class ChatEndpoint extends Endpoint {
     var dateString = DateTime.now().toUtc().toString().substring(0, 10);
 
     return 'serverpod/chat/$userId/$dateString/$rndString/$fileName';
+  }
+
+  /// Uploads an attachment. Returns url.
+  Future<ChatMessageAttachment?> uploadAttachment(
+    Session session,
+    ByteData byteData,
+    String fileName,
+  ) async {
+    var uploadDescription =
+        await createAttachmentUploadDescription(session, fileName);
+    if (uploadDescription == null) return null;
+
+    await session.storage.storeFile(
+      storageId: 'public',
+      path: uploadDescription.filePath,
+      byteData: byteData,
+    );
+    final attachment = await verifyAttachmentUpload(
+      session,
+      fileName,
+      uploadDescription.filePath,
+    );
+
+    return attachment;
   }
 
   bool _isEphemeralChannel(String channel) {

@@ -1,0 +1,12 @@
+### A chat message edit request.
+class: ChatMessageEdit
+fields:
+  ### The channel this message is posted to.
+  messageId: int
+  message: String
+  removed: bool
+
+  reactions: List<String>?
+  reactionsUsers: List<String>?
+  ### List of attachments associated with this message.
+  attachments: List<ChatMessageAttachment>?

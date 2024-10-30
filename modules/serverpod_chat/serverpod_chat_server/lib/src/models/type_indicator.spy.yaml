@@ -1,0 +1,5 @@
+class: TypeIndicator
+fields:
+  typerID: int
+  status: bool
+  channel: String

@@ -1,0 +1,6 @@
+enum: ChatExceptionType
+values:
+  - unauthorized
+  - notFound
+  - invalidMessage
+  - unknown

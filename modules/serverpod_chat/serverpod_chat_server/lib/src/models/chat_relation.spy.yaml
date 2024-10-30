@@ -1,0 +1,9 @@
+class: ChatRelation
+table: chat_relation
+fields:
+  userId: int
+  chatChannelId: int
+
+indexes:
+  chat_relation_user_idx:
+    fields: userId

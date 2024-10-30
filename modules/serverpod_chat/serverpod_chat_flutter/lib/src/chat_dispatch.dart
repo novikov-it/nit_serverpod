@@ -52,6 +52,8 @@ class ChatDispatch {
         _routeMessageToChannel(message.channel, message);
       } else if (message is ChatJoinedChannel) {
         _routeMessageToChannel(message.channel, message);
+      } else if (message is ChatReadMessage) {
+        _routeMessageToChannel(message.channel, message);
       } else if (message is ChatJoinChannelFailed) {
         _routeMessageToChannel(message.channel, message);
       } else if (message is ChatMessageChunk) {
@@ -68,7 +70,7 @@ class ChatDispatch {
   }
 
   /// Posts a chat message.
-  Future<void> postMessage(ChatMessagePost message) async {
+  Future<void> postMessage(SerializableModel message) async {
     await caller.chat.sendStreamMessage(message);
   }
 

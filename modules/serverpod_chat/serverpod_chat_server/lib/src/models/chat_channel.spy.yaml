@@ -1,0 +1,12 @@
+class: ChannelInfo
+table: chat_channel
+fields:
+  ### Channel identifier
+  channel: String
+
+  isPrivate: bool
+
+  chatWith: module:auth:UserInfo?, !persist
+
+  lastMessage: ChatMessage?, !persist
+  hasUnreadMessages: bool

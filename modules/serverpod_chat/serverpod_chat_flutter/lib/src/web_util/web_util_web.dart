@@ -1,9 +1,9 @@
-import 'package:web/web.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html';
 
 /// Downloads the specified [url] to the download folder of the computer.
 void downloadURL(String url) {
-  var anchorElement = HTMLAnchorElement();
-  anchorElement.href = url;
+  var anchorElement = AnchorElement(href: url);
   anchorElement.download = url;
   anchorElement.target = '_blank';
   anchorElement.click();

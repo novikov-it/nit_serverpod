@@ -3,31 +3,36 @@
 
 name: serverpod_chat_server
 description: Serverpod chat server module.
-version: 2.1.2
+version: 2.0.2
+publish_to: none
 repository: https://github.com/serverpod/serverpod
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: '>=3.2.0 <4.0.0'
 
 dependencies:
-  serverpod: 2.1.2
-  serverpod_auth_server: 2.1.2
-  serverpod_serialization: 2.1.2
+  serverpod: ^2.1.4
+  # serverpod_auth_server: 2.0.2
+  serverpod_serialization: ^2.1.2
   http: '>=1.0.0 <2.0.0'
   image: ^4.0.15
   path: ^1.8.2
-
-dev_dependencies:
-  serverpod_lints: 2.1.2
-
-dependency_overrides:
-  serverpod:
-    path: ../../../packages/serverpod
   serverpod_auth_server:
     path: ../../serverpod_auth/serverpod_auth_server
-  serverpod_serialization:
-    path: ../../../packages/serverpod_serialization/
-  serverpod_lints:
-    path: ../../../packages/serverpod_lints
-  serverpod_shared:
-    path: ../../../packages/serverpod_shared
+  # kerla2_server:
+  #   path: ../../../
+
+dev_dependencies:
+  serverpod_lints: ^2.1.2
+
+# dependency_overrides:
+#   serverpod:
+#     path: ../../../packages/serverpod
+#   serverpod_auth_server:
+#     path: ../../serverpod_auth/serverpod_auth_server
+#   serverpod_serialization:
+#     path: ../../../packages/serverpod_serialization/
+#   serverpod_lints:
+#     path: ../../../packages/serverpod_lints
+#   serverpod_shared:
+#     path: ../../../packages/serverpod_shared

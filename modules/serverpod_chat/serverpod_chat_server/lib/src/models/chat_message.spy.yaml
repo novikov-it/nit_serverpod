@@ -28,6 +28,12 @@ fields:
 
   ### List of attachments associated with this message.
   attachments: List<ChatMessageAttachment>?
+  ### The reactions of the message
+  reactions: List<String>?
+  ### The users who reacted
+  reactionsUsers: List<String>?
+  ### The reply messages
+  replyMessages: Map<String, String>?
 indexes:
   serverpod_chat_message_channel_idx:
     fields: channel

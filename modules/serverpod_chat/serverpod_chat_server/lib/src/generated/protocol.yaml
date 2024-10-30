@@ -1,3 +1,12 @@
+channels:
+  - deleteChannel:
+  - getPrivateChannels:
+  - getPrivateChatChannel:
+  - getPublicChatChannel:
+  - hasChannelNewMessages:
+  - hasUnreadMessages:
 chat:
   - createAttachmentUploadDescription:
   - verifyAttachmentUpload:
+  - uploadAttachment:
+typingIndicator:
