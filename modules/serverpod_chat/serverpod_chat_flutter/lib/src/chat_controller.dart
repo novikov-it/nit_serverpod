@@ -75,6 +75,9 @@ class ChatController {
 
   int _lastReadMessage = 0;
 
+  // nit_special: needed for easier lastReadMessage access from UI
+  int get lastReadMessageId => _lastReadMessage;
+
   /// Counter for fake IDs for the ephemeral messages
   /// (Used in order to keep track of their read state)
   int _ephemeralMessageId = 0;
