@@ -8,6 +8,8 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: invalid_use_of_visible_for_testing_member
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 
@@ -213,7 +215,7 @@ class PhoneFailedSignInRepository {
   const PhoneFailedSignInRepository._();
 
   Future<List<PhoneFailedSignIn>> find(
-    _i1.DatabaseAccessor databaseAccessor, {
+    _i1.Session session, {
     _i1.WhereExpressionBuilder<PhoneFailedSignInTable>? where,
     int? limit,
     int? offset,
@@ -222,19 +224,19 @@ class PhoneFailedSignInRepository {
     _i1.OrderByListBuilder<PhoneFailedSignInTable>? orderByList,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.find<PhoneFailedSignIn>(
+    return session.db.find<PhoneFailedSignIn>(
       where: where?.call(PhoneFailedSignIn.t),
       orderBy: orderBy?.call(PhoneFailedSignIn.t),
       orderByList: orderByList?.call(PhoneFailedSignIn.t),
       orderDescending: orderDescending,
       limit: limit,
       offset: offset,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<PhoneFailedSignIn?> findFirstRow(
-    _i1.DatabaseAccessor databaseAccessor, {
+    _i1.Session session, {
     _i1.WhereExpressionBuilder<PhoneFailedSignInTable>? where,
     int? offset,
     _i1.OrderByBuilder<PhoneFailedSignInTable>? orderBy,
@@ -242,118 +244,118 @@ class PhoneFailedSignInRepository {
     _i1.OrderByListBuilder<PhoneFailedSignInTable>? orderByList,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.findFirstRow<PhoneFailedSignIn>(
+    return session.db.findFirstRow<PhoneFailedSignIn>(
       where: where?.call(PhoneFailedSignIn.t),
       orderBy: orderBy?.call(PhoneFailedSignIn.t),
       orderByList: orderByList?.call(PhoneFailedSignIn.t),
       orderDescending: orderDescending,
       offset: offset,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<PhoneFailedSignIn?> findById(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     int id, {
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.findById<PhoneFailedSignIn>(
+    return session.db.findById<PhoneFailedSignIn>(
       id,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<List<PhoneFailedSignIn>> insert(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     List<PhoneFailedSignIn> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.insert<PhoneFailedSignIn>(
+    return session.db.insert<PhoneFailedSignIn>(
       rows,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<PhoneFailedSignIn> insertRow(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     PhoneFailedSignIn row, {
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.insertRow<PhoneFailedSignIn>(
+    return session.db.insertRow<PhoneFailedSignIn>(
       row,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<List<PhoneFailedSignIn>> update(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     List<PhoneFailedSignIn> rows, {
     _i1.ColumnSelections<PhoneFailedSignInTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.update<PhoneFailedSignIn>(
+    return session.db.update<PhoneFailedSignIn>(
       rows,
       columns: columns?.call(PhoneFailedSignIn.t),
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<PhoneFailedSignIn> updateRow(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     PhoneFailedSignIn row, {
     _i1.ColumnSelections<PhoneFailedSignInTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.updateRow<PhoneFailedSignIn>(
+    return session.db.updateRow<PhoneFailedSignIn>(
       row,
       columns: columns?.call(PhoneFailedSignIn.t),
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<List<PhoneFailedSignIn>> delete(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     List<PhoneFailedSignIn> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.delete<PhoneFailedSignIn>(
+    return session.db.delete<PhoneFailedSignIn>(
       rows,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<PhoneFailedSignIn> deleteRow(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     PhoneFailedSignIn row, {
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.deleteRow<PhoneFailedSignIn>(
+    return session.db.deleteRow<PhoneFailedSignIn>(
       row,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<List<PhoneFailedSignIn>> deleteWhere(
-    _i1.DatabaseAccessor databaseAccessor, {
+    _i1.Session session, {
     required _i1.WhereExpressionBuilder<PhoneFailedSignInTable> where,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.deleteWhere<PhoneFailedSignIn>(
+    return session.db.deleteWhere<PhoneFailedSignIn>(
       where: where(PhoneFailedSignIn.t),
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<int> count(
-    _i1.DatabaseAccessor databaseAccessor, {
+    _i1.Session session, {
     _i1.WhereExpressionBuilder<PhoneFailedSignInTable>? where,
     int? limit,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.count<PhoneFailedSignIn>(
+    return session.db.count<PhoneFailedSignIn>(
       where: where?.call(PhoneFailedSignIn.t),
       limit: limit,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 }

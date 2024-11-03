@@ -8,6 +8,8 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
+// ignore_for_file: invalid_use_of_visible_for_testing_member
+
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 
@@ -234,7 +236,7 @@ class PhoneAuthRepository {
   const PhoneAuthRepository._();
 
   Future<List<PhoneAuth>> find(
-    _i1.DatabaseAccessor databaseAccessor, {
+    _i1.Session session, {
     _i1.WhereExpressionBuilder<PhoneAuthTable>? where,
     int? limit,
     int? offset,
@@ -243,19 +245,19 @@ class PhoneAuthRepository {
     _i1.OrderByListBuilder<PhoneAuthTable>? orderByList,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.find<PhoneAuth>(
+    return session.db.find<PhoneAuth>(
       where: where?.call(PhoneAuth.t),
       orderBy: orderBy?.call(PhoneAuth.t),
       orderByList: orderByList?.call(PhoneAuth.t),
       orderDescending: orderDescending,
       limit: limit,
       offset: offset,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<PhoneAuth?> findFirstRow(
-    _i1.DatabaseAccessor databaseAccessor, {
+    _i1.Session session, {
     _i1.WhereExpressionBuilder<PhoneAuthTable>? where,
     int? offset,
     _i1.OrderByBuilder<PhoneAuthTable>? orderBy,
@@ -263,118 +265,118 @@ class PhoneAuthRepository {
     _i1.OrderByListBuilder<PhoneAuthTable>? orderByList,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.findFirstRow<PhoneAuth>(
+    return session.db.findFirstRow<PhoneAuth>(
       where: where?.call(PhoneAuth.t),
       orderBy: orderBy?.call(PhoneAuth.t),
       orderByList: orderByList?.call(PhoneAuth.t),
       orderDescending: orderDescending,
       offset: offset,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<PhoneAuth?> findById(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     int id, {
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.findById<PhoneAuth>(
+    return session.db.findById<PhoneAuth>(
       id,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<List<PhoneAuth>> insert(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     List<PhoneAuth> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.insert<PhoneAuth>(
+    return session.db.insert<PhoneAuth>(
       rows,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<PhoneAuth> insertRow(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     PhoneAuth row, {
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.insertRow<PhoneAuth>(
+    return session.db.insertRow<PhoneAuth>(
       row,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<List<PhoneAuth>> update(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     List<PhoneAuth> rows, {
     _i1.ColumnSelections<PhoneAuthTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.update<PhoneAuth>(
+    return session.db.update<PhoneAuth>(
       rows,
       columns: columns?.call(PhoneAuth.t),
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<PhoneAuth> updateRow(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     PhoneAuth row, {
     _i1.ColumnSelections<PhoneAuthTable>? columns,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.updateRow<PhoneAuth>(
+    return session.db.updateRow<PhoneAuth>(
       row,
       columns: columns?.call(PhoneAuth.t),
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<List<PhoneAuth>> delete(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     List<PhoneAuth> rows, {
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.delete<PhoneAuth>(
+    return session.db.delete<PhoneAuth>(
       rows,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<PhoneAuth> deleteRow(
-    _i1.DatabaseAccessor databaseAccessor,
+    _i1.Session session,
     PhoneAuth row, {
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.deleteRow<PhoneAuth>(
+    return session.db.deleteRow<PhoneAuth>(
       row,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<List<PhoneAuth>> deleteWhere(
-    _i1.DatabaseAccessor databaseAccessor, {
+    _i1.Session session, {
     required _i1.WhereExpressionBuilder<PhoneAuthTable> where,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.deleteWhere<PhoneAuth>(
+    return session.db.deleteWhere<PhoneAuth>(
       where: where(PhoneAuth.t),
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 
   Future<int> count(
-    _i1.DatabaseAccessor databaseAccessor, {
+    _i1.Session session, {
     _i1.WhereExpressionBuilder<PhoneAuthTable>? where,
     int? limit,
     _i1.Transaction? transaction,
   }) async {
-    return databaseAccessor.db.count<PhoneAuth>(
+    return session.db.count<PhoneAuth>(
       where: where?.call(PhoneAuth.t),
       limit: limit,
-      transaction: transaction ?? databaseAccessor.transaction,
+      transaction: transaction ?? session.transaction,
     );
   }
 }
