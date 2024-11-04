@@ -152,8 +152,13 @@ class ChatEndpoint extends Endpoint {
         attachments: message.attachments,
       );
 
+      // if (!_isEphemeralChannel(message.channel)) {
+      //   await ChatMessage.db.insertRow(session, chatMessage);
+      // }
+
       if (!_isEphemeralChannel(message.channel)) {
-        await ChatMessage.db.insertRow(session, chatMessage);
+        final inserted = await ChatMessage.db.insertRow(session, chatMessage);
+        chatMessage = chatMessage.copyWith(id: inserted.id);
       }
 
       session.messages.postMessage(
