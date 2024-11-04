@@ -1,0 +1,24 @@
+2024-11-04
+Added id update in modules/serverpod_chat/serverpod_chat_server/lib/src/endpoints/chat_endpoint.dart
+// if (!_isEphemeralChannel(message.channel)) {
+//   await ChatMessage.db.insertRow(session, chatMessage);
+// }
+
+if (!_isEphemeralChannel(message.channel)) {
+  await ChatMessage.db.insertRow(session, chatMessage);
+  final inserted = await ChatMessage.db.insertRow(session, chatMessage);
+  chatMessage = chatMessage.copyWith(id: inserted.id);
+}
+
+2024-11-03
+Added to modules/serverpod_chat/serverpod_chat_flutter/lib/src/chat_controller.dart
+int get lastReadMessageId => _lastReadMessage;
+
+2024-10-27
+Added fixes for S3 file upload through Yandex Cloud
+
+2024-10-11
+Implemented phone auth module https://github.com/serverpod/serverpod/commit/df939f738bb6d79dd8e7c7842f727bd885362064
+Added modules/serverpod_auth/serverpod_auth_phone_flutter,
+Added phone_auth, phone_config, phone_endpoint, some models
+performed serverpod generate in serverpod_auth_server
