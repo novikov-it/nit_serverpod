@@ -221,7 +221,7 @@ class ChatController {
         module.chat.sendStreamMessage(
           ChatReadMessage(
             channel: channel,
-            userId: sessionManager.signedInUser!.id!,
+            userId: _joinedAsUserInfo!.id!, // sessionManager.signedInUser!.id!,
             lastReadMessageId: messageId,
           ),
         );

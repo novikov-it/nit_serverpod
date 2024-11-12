@@ -1,4 +1,6 @@
 2024-11-12
+Fixed markLastMessageRead for unauthenticatedUser
+
 Added to modules/serverpod_chat/serverpod_chat_flutter/lib/src/chat_controller.dart
 /// provides access to lastReadMessageId from UI
 int get lastReadMessageId => _lastReadMessage;
