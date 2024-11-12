@@ -1,0 +1,18 @@
+2024-11-12
+Added to modules/serverpod_chat/serverpod_chat_flutter/lib/src/chat_controller.dart
+/// provides access to lastReadMessageId from UI
+int get lastReadMessageId => _lastReadMessage;
+/// Currently connected user ID, used check if a message is sent by active user or not
+int? get joinedAsUserId => _joinedAsUserInfo?.id;
+
+2024-11-08
+Made validationCode digitsOnly, added chars: '0123456789', to modules\serverpod_auth\serverpod_auth_server\lib\src\business\email_auth.dart
+
+2024-10-27
+Added fixes for S3 file upload through Yandex Cloud
+
+2024-10-11
+Implemented phone auth module https://github.com/serverpod/serverpod/commit/df939f738bb6d79dd8e7c7842f727bd885362064
+Added modules/serverpod_auth/serverpod_auth_phone_flutter,
+Added phone_auth, phone_config, phone_endpoint, some models
+performed serverpod generate in serverpod_auth_server

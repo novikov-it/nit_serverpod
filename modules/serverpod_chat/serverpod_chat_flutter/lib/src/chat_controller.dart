@@ -86,6 +86,12 @@ class ChatController {
   /// True if we have received a [UserInfo] for the current user.
   bool get hasUserInfo => _joinedAsUserInfo != null;
 
+  /// provides access to lastReadMessageId from UI
+  int get lastReadMessageId => _lastReadMessage;
+
+  /// Currently connected user ID, used check if a message is sent by active user or not
+  int? get joinedAsUserId => _joinedAsUserInfo?.id;
+
   /// Creates a new [ChatController].
   ChatController({
     required String channel,
