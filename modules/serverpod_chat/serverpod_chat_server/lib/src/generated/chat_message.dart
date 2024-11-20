@@ -23,6 +23,7 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
     required this.message,
     required this.time,
     required this.sender,
+    this.senderName,
     this.senderInfo,
     required this.removed,
     this.clientMessageId,
@@ -36,6 +37,7 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
     required String message,
     required DateTime time,
     required int sender,
+    String? senderName,
     _i2.UserInfoPublic? senderInfo,
     required bool removed,
     int? clientMessageId,
@@ -50,6 +52,7 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
       message: jsonSerialization['message'] as String,
       time: _i1.DateTimeJsonExtension.fromJson(jsonSerialization['time']),
       sender: jsonSerialization['sender'] as int,
+      senderName: jsonSerialization['senderName'] as String?,
       senderInfo: jsonSerialization['senderInfo'] == null
           ? null
           : _i2.UserInfoPublic.fromJson(
@@ -83,6 +86,8 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
   /// The user id of the sender.
   int sender;
 
+  String? senderName;
+
   /// Information about the sender.
   _i2.UserInfoPublic? senderInfo;
 
@@ -107,6 +112,7 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
     String? message,
     DateTime? time,
     int? sender,
+    String? senderName,
     _i2.UserInfoPublic? senderInfo,
     bool? removed,
     int? clientMessageId,
@@ -121,6 +127,7 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
       'message': message,
       'time': time.toJson(),
       'sender': sender,
+      if (senderName != null) 'senderName': senderName,
       if (senderInfo != null) 'senderInfo': senderInfo?.toJson(),
       'removed': removed,
       if (clientMessageId != null) 'clientMessageId': clientMessageId,
@@ -138,6 +145,7 @@ abstract class ChatMessage implements _i1.TableRow, _i1.ProtocolSerialization {
       'message': message,
       'time': time.toJson(),
       'sender': sender,
+      if (senderName != null) 'senderName': senderName,
       if (senderInfo != null) 'senderInfo': senderInfo?.toJsonForProtocol(),
       'removed': removed,
       if (clientMessageId != null) 'clientMessageId': clientMessageId,
@@ -187,6 +195,7 @@ class _ChatMessageImpl extends ChatMessage {
     required String message,
     required DateTime time,
     required int sender,
+    String? senderName,
     _i2.UserInfoPublic? senderInfo,
     required bool removed,
     int? clientMessageId,
@@ -198,6 +207,7 @@ class _ChatMessageImpl extends ChatMessage {
           message: message,
           time: time,
           sender: sender,
+          senderName: senderName,
           senderInfo: senderInfo,
           removed: removed,
           clientMessageId: clientMessageId,
@@ -212,6 +222,7 @@ class _ChatMessageImpl extends ChatMessage {
     String? message,
     DateTime? time,
     int? sender,
+    Object? senderName = _Undefined,
     Object? senderInfo = _Undefined,
     bool? removed,
     Object? clientMessageId = _Undefined,
@@ -224,6 +235,7 @@ class _ChatMessageImpl extends ChatMessage {
       message: message ?? this.message,
       time: time ?? this.time,
       sender: sender ?? this.sender,
+      senderName: senderName is String? ? senderName : this.senderName,
       senderInfo: senderInfo is _i2.UserInfoPublic?
           ? senderInfo
           : this.senderInfo?.copyWith(),
@@ -257,6 +269,10 @@ class ChatMessageTable extends _i1.Table {
       'sender',
       this,
     );
+    senderName = _i1.ColumnString(
+      'senderName',
+      this,
+    );
     removed = _i1.ColumnBool(
       'removed',
       this,
@@ -279,6 +295,8 @@ class ChatMessageTable extends _i1.Table {
   /// The user id of the sender.
   late final _i1.ColumnInt sender;
 
+  late final _i1.ColumnString senderName;
+
   /// True, if this message has been removed.
   late final _i1.ColumnBool removed;
 
@@ -292,6 +310,7 @@ class ChatMessageTable extends _i1.Table {
         message,
         time,
         sender,
+        senderName,
         removed,
         attachments,
       ];

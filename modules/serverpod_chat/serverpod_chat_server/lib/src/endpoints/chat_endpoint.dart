@@ -145,6 +145,7 @@ class ChatEndpoint extends Endpoint {
         message: message.message,
         time: DateTime.now(),
         sender: chatSession.userInfo!.id!,
+        senderName: chatSession.userInfo?.userName,
         senderInfo: chatSession.userInfo?.toPublic(),
         removed: false,
         clientMessageId: message.clientMessageId,

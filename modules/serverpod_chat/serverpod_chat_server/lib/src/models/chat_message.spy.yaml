@@ -13,6 +13,7 @@ fields:
 
   ### The user id of the sender.
   sender: int
+  senderName: String?
 
   ### Information about the sender.
   senderInfo: module:auth:UserInfoPublic?, !persist

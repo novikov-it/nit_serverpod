@@ -1,3 +1,7 @@
+2024-11-20
+Added senderName to ChatMessage
+senderName: chatSession.userInfo?.userName,
+
 2024-11-12
 Fixed markLastMessageRead for unauthenticatedUser
 

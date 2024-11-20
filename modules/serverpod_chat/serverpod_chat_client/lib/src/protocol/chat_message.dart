@@ -21,6 +21,7 @@ abstract class ChatMessage implements _i1.SerializableModel {
     required this.message,
     required this.time,
     required this.sender,
+    this.senderName,
     this.senderInfo,
     required this.removed,
     this.clientMessageId,
@@ -34,6 +35,7 @@ abstract class ChatMessage implements _i1.SerializableModel {
     required String message,
     required DateTime time,
     required int sender,
+    String? senderName,
     _i2.UserInfoPublic? senderInfo,
     required bool removed,
     int? clientMessageId,
@@ -48,6 +50,7 @@ abstract class ChatMessage implements _i1.SerializableModel {
       message: jsonSerialization['message'] as String,
       time: _i1.DateTimeJsonExtension.fromJson(jsonSerialization['time']),
       sender: jsonSerialization['sender'] as int,
+      senderName: jsonSerialization['senderName'] as String?,
       senderInfo: jsonSerialization['senderInfo'] == null
           ? null
           : _i2.UserInfoPublic.fromJson(
@@ -79,6 +82,8 @@ abstract class ChatMessage implements _i1.SerializableModel {
   /// The user id of the sender.
   int sender;
 
+  String? senderName;
+
   /// Information about the sender.
   _i2.UserInfoPublic? senderInfo;
 
@@ -100,6 +105,7 @@ abstract class ChatMessage implements _i1.SerializableModel {
     String? message,
     DateTime? time,
     int? sender,
+    String? senderName,
     _i2.UserInfoPublic? senderInfo,
     bool? removed,
     int? clientMessageId,
@@ -114,6 +120,7 @@ abstract class ChatMessage implements _i1.SerializableModel {
       'message': message,
       'time': time.toJson(),
       'sender': sender,
+      if (senderName != null) 'senderName': senderName,
       if (senderInfo != null) 'senderInfo': senderInfo?.toJson(),
       'removed': removed,
       if (clientMessageId != null) 'clientMessageId': clientMessageId,
@@ -138,6 +145,7 @@ class _ChatMessageImpl extends ChatMessage {
     required String message,
     required DateTime time,
     required int sender,
+    String? senderName,
     _i2.UserInfoPublic? senderInfo,
     required bool removed,
     int? clientMessageId,
@@ -149,6 +157,7 @@ class _ChatMessageImpl extends ChatMessage {
           message: message,
           time: time,
           sender: sender,
+          senderName: senderName,
           senderInfo: senderInfo,
           removed: removed,
           clientMessageId: clientMessageId,
@@ -163,6 +172,7 @@ class _ChatMessageImpl extends ChatMessage {
     String? message,
     DateTime? time,
     int? sender,
+    Object? senderName = _Undefined,
     Object? senderInfo = _Undefined,
     bool? removed,
     Object? clientMessageId = _Undefined,
@@ -175,6 +185,7 @@ class _ChatMessageImpl extends ChatMessage {
       message: message ?? this.message,
       time: time ?? this.time,
       sender: sender ?? this.sender,
+      senderName: senderName is String? ? senderName : this.senderName,
       senderInfo: senderInfo is _i2.UserInfoPublic?
           ? senderInfo
           : this.senderInfo?.copyWith(),
