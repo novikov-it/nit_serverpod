@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:nit_alerts/nit_alerts.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod/src/cache/caches.dart';
 import 'package:serverpod/src/database/database.dart';
@@ -476,6 +477,15 @@ class Server {
     authenticationKey ??= queryParameters['auth'];
 
     MethodCallSession? maybeSession;
+
+    // Used for NitAlertsManager.reportError call if something goes wrong
+    Map<String, String> callContext = {
+      'endpoint': endpointName,
+      'method': methodName,
+      'queryParameters': queryParameters.toString(),
+      'authenticationKey': '$authenticationKey',
+    };
+
     try {
       var methodCallContext = await endpoints.getMethodCallContext(
         createSessionCallback: (connector) {
@@ -515,23 +525,71 @@ class Server {
         sendByteDataAsRaw: methodCallContext.endpoint.sendByteDataAsRaw,
       );
     } on MethodNotFoundException catch (e) {
+      NitAlertsManager.reportError(
+        text: e.runtimeType.toString(),
+        state: callContext,
+        error: e,
+        stacktrace: StackTrace.current,
+      );
       return ResultInvalidParams(e.message);
     } on InvalidEndpointMethodTypeException catch (e) {
+      NitAlertsManager.reportError(
+        text: e.runtimeType.toString(),
+        state: callContext,
+        error: e,
+        stacktrace: StackTrace.current,
+      );
       return ResultInvalidParams(e.message);
     } on EndpointNotFoundException catch (e) {
+      NitAlertsManager.reportError(
+        text: e.runtimeType.toString(),
+        state: callContext,
+        error: e,
+        stacktrace: StackTrace.current,
+      );
       return ResultNoSuchEndpoint(e.message);
     } on NotAuthorizedException catch (e) {
+      NitAlertsManager.reportError(
+        text: e.runtimeType.toString(),
+        state: callContext,
+        error: e,
+        stacktrace: StackTrace.current,
+      );
       return e.authenticationFailedResult;
     } on InvalidParametersException catch (e) {
+      NitAlertsManager.reportError(
+        text: e.runtimeType.toString(),
+        state: callContext,
+        error: e,
+        stacktrace: StackTrace.current,
+      );
       return ResultInvalidParams(e.message);
     } on SerializableException catch (exception) {
+      NitAlertsManager.reportError(
+        text: exception.runtimeType.toString(),
+        state: callContext,
+        error: exception,
+        stacktrace: StackTrace.current,
+      );
       return ExceptionResult(model: exception);
     } on Exception catch (e, stackTrace) {
+      NitAlertsManager.reportError(
+        text: e.runtimeType.toString(),
+        state: callContext,
+        error: e,
+        stacktrace: stackTrace,
+      );
       var sessionLogId =
           await maybeSession?.close(error: e, stackTrace: stackTrace);
       return ResultInternalServerError(
           e.toString(), stackTrace, sessionLogId ?? 0);
     } catch (e, stackTrace) {
+      NitAlertsManager.reportError(
+        text: e.runtimeType.toString(),
+        state: callContext,
+        error: e,
+        stacktrace: stackTrace,
+      );
       // Something did not work out
       var sessionLogId =
           await maybeSession?.close(error: e, stackTrace: stackTrace);

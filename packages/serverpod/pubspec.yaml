@@ -37,6 +37,11 @@ dependencies:
   serverpod_shared: 2.1.5
   serverpod_serialization: 2.1.5
 
+  nit_alerts:
+    git:
+      url: git@github.com:novikov-it/nit_alerts.git
+      ref: master
+
 dev_dependencies:
   test: ^1.24.2
   serverpod_lints: 2.1.5
