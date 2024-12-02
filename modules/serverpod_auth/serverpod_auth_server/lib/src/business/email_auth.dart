@@ -424,14 +424,14 @@ class Emails {
       }
 
       userName = userName.trim();
-      if (userName.isEmpty) {
-        session.log(
-          'Invalid userName!'
-          "'userName' must not be empty.",
-          level: LogLevel.debug,
-        );
-        return false;
-      }
+      // if (userName.isEmpty) {
+      //   session.log(
+      //     'Invalid userName!'
+      //     "'userName' must not be empty.",
+      //     level: LogLevel.debug,
+      //   );
+      //   return false;
+      // }
 
       if (password.length < AuthConfig.current.minPasswordLength ||
           password.length > AuthConfig.current.maxPasswordLength) {
