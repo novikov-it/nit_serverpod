@@ -125,9 +125,9 @@ class PhonesAuth {
 
     var phoneAuthConfig = PhoneAuthConfig.current;
 
-    var otp = Serverpod.instance.runMode == ServerpodRunMode.development
-        ? '123456'
-        : _generateOTP();
+    var otp =
+        // Serverpod.instance.runMode == ServerpodRunMode.development
+        phoneAuthConfig.sendValidationOTP == null ? '123456' : _generateOTP();
 
     var hash = _generateHashData(
       phoneNumber: number,
