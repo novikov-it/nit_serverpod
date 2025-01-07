@@ -101,16 +101,16 @@ class PhonesAuth {
     Session session, {
     required String number,
   }) async {
-    if (number.length != 11 || !number.startsWith('7')) {
-      session.log(
-        'Неверный формат номера телефона',
-        level: LogLevel.error,
-      );
-      return AuthenticationResponse(
-        success: false,
-        failReason: AuthenticationFailReason.userCreationDenied,
-      );
-    }
+    // if (number.length != 11 || !number.startsWith('7')) {
+    //   session.log(
+    //     'Неверный формат номера телефона $number',
+    //     level: LogLevel.error,
+    //   );
+    //   return AuthenticationResponse(
+    //     success: false,
+    //     failReason: AuthenticationFailReason.userCreationDenied,
+    //   );
+    // }
 
     if (await _hasTooManyFailedSignIns(session, number)) {
       session.log(

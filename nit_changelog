@@ -1,6 +1,10 @@
 2025-01-08
-Refactor AWS S3 signed request parameters to improve readability and maintainability and to fix bugs with amazon aws. Refactor build signed params method
+1) Refactor AWS S3 signed request parameters to improve readability and maintainability and to fix bugs with amazon aws. Refactor build signed params method
 Rafactored file is integrations\serverpod_cloud_storage_s3\lib\src\aws_s3_client\client\client.dart
+
+2) Disabled phone number validation in phone_auth.dart - it could different for different projects
+Should be provided as a part of config, but seems not needed at all
+
 2025-01-07
 Changed criteria for OTP generation in phone_auth
 From Serverpod.instance.runMode == ServerpodRunMode.development to phoneAuthConfig.sendValidationOTP == null
