@@ -1,3 +1,7 @@
+2025-01-08
+Disabled phone number validation in phone_auth.dart - it could different for different projects
+Should be provided as a part of config, but seems not needed at all
+
 2025-01-07
 Changed criteria for OTP generation in phone_auth
 From Serverpod.instance.runMode == ServerpodRunMode.development to phoneAuthConfig.sendValidationOTP == null
