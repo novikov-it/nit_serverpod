@@ -57,10 +57,14 @@ class PhoneAuthController {
 
   /// Attempts to send an OTP. null
   Future<AuthenticationResponse> sendOTP(
-    String phoneNumber,
-  ) async {
+    String phoneNumber, {
+    Map<String, String>? extraParams,
+  }) async {
     try {
-      return await sessionManager.caller.phone.sendOTP(phoneNumber);
+      return await sessionManager.caller.phone.sendOTP(
+        phoneNumber,
+        extraParams: extraParams,
+      );
     } catch (e, stackTrace) {
       if (kDebugMode) {
         print('$e');
@@ -76,10 +80,16 @@ class PhoneAuthController {
 
   /// Attempts to resend an OTP.
   Future<String> resendOTP(
-    String phoneNumber,
-  ) async {
+    String phoneNumber, {
+    Map<String, String>? extraParams,
+  }) async {
     try {
-      return await sessionManager.caller.phone.resendOTP(phoneNumber).then(
+      return await sessionManager.caller.phone
+          .resendOTP(
+            phoneNumber,
+            extraParams: extraParams,
+          )
+          .then(
             (value) => value.failReason.toString(),
           );
     } catch (e, stackTrace) {

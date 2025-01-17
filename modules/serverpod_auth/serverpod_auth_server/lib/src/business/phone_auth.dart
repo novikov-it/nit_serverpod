@@ -100,6 +100,7 @@ class PhonesAuth {
   static Future<AuthenticationResponse> sendOTP(
     Session session, {
     required String number,
+    Map<String, String>? extraParams,
   }) async {
     // if (number.length != 11 || !number.startsWith('7')) {
     //   session.log(
@@ -141,6 +142,7 @@ class PhonesAuth {
           session,
           number,
           otp,
+          extraParams: extraParams,
         );
       }
 
@@ -171,6 +173,7 @@ class PhonesAuth {
   static Future<AuthenticationResponse> resendOTP(
     Session session, {
     required String number,
+    Map<String, String>? extraParams,
   }) async {
     var phoneAuthConfig = PhoneAuthConfig.current;
     var sendCountForLastTime = await PhoneAuth.db.count(
@@ -190,7 +193,7 @@ class PhonesAuth {
       );
     }
 
-    return await sendOTP(session, number: number);
+    return await sendOTP(session, number: number, extraParams: extraParams);
   }
 
   static bool _verifyHashData(

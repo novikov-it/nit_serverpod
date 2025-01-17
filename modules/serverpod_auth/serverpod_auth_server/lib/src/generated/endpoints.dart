@@ -418,7 +418,12 @@ class Endpoints extends _i1.EndpointDispatch {
               name: 'phoneNumber',
               type: _i1.getType<String>(),
               nullable: false,
-            )
+            ),
+            'extraParams': _i1.ParameterDescription(
+              name: 'extraParams',
+              type: _i1.getType<Map<String, String>?>(),
+              nullable: true,
+            ),
           },
           call: (
             _i1.Session session,
@@ -427,6 +432,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['phone'] as _i7.PhoneEndpoint).sendOTP(
             session,
             params['phoneNumber'],
+            extraParams: params['extraParams'],
           ),
         ),
         'resendOTP': _i1.MethodConnector(
@@ -436,7 +442,12 @@ class Endpoints extends _i1.EndpointDispatch {
               name: 'phoneNumber',
               type: _i1.getType<String>(),
               nullable: false,
-            )
+            ),
+            'extraParams': _i1.ParameterDescription(
+              name: 'extraParams',
+              type: _i1.getType<Map<String, String>?>(),
+              nullable: true,
+            ),
           },
           call: (
             _i1.Session session,
@@ -445,6 +456,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['phone'] as _i7.PhoneEndpoint).resendOTP(
             session,
             params['phoneNumber'],
+            extraParams: params['extraParams'],
           ),
         ),
       },

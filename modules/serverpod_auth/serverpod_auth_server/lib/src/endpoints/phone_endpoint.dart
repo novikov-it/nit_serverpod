@@ -17,16 +17,26 @@ class PhoneEndpoint extends Endpoint {
   /// Sends an OTP to the user.
   Future<AuthenticationResponse> sendOTP(
     Session session,
-    String phoneNumber,
-  ) {
-    return PhonesAuth.sendOTP(session, number: phoneNumber);
+    String phoneNumber, {
+    Map<String, String>? extraParams,
+  }) {
+    return PhonesAuth.sendOTP(
+      session,
+      number: phoneNumber,
+      extraParams: extraParams,
+    );
   }
 
   /// Resends an OTP to the user.
   Future<AuthenticationResponse> resendOTP(
     Session session,
-    String phoneNumber,
-  ) {
-    return PhonesAuth.resendOTP(session, number: phoneNumber);
+    String phoneNumber, {
+    Map<String, String>? extraParams,
+  }) {
+    return PhonesAuth.resendOTP(
+      session,
+      number: phoneNumber,
+      extraParams: extraParams,
+    );
   }
 }

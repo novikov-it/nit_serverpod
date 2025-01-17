@@ -1,3 +1,6 @@
+2025-01-13
+Phone auth extraParams introduced for nit-shop specific requirements
+
 2025-01-08
 Disabled phone number validation in phone_auth.dart - it could different for different projects
 Should be provided as a part of config, but seems not needed at all

@@ -235,19 +235,31 @@ class EndpointPhone extends _i1.EndpointRef {
       );
 
   /// Sends an OTP to the user.
-  _i2.Future<_i4.AuthenticationResponse> sendOTP(String phoneNumber) =>
+  _i2.Future<_i4.AuthenticationResponse> sendOTP(
+    String phoneNumber, {
+    Map<String, String>? extraParams,
+  }) =>
       caller.callServerEndpoint<_i4.AuthenticationResponse>(
         'serverpod_auth.phone',
         'sendOTP',
-        {'phoneNumber': phoneNumber},
+        {
+          'phoneNumber': phoneNumber,
+          'extraParams': extraParams,
+        },
       );
 
   /// Resends an OTP to the user.
-  _i2.Future<_i4.AuthenticationResponse> resendOTP(String phoneNumber) =>
+  _i2.Future<_i4.AuthenticationResponse> resendOTP(
+    String phoneNumber, {
+    Map<String, String>? extraParams,
+  }) =>
       caller.callServerEndpoint<_i4.AuthenticationResponse>(
         'serverpod_auth.phone',
         'resendOTP',
-        {'phoneNumber': phoneNumber},
+        {
+          'phoneNumber': phoneNumber,
+          'extraParams': extraParams,
+        },
       );
 }
 

@@ -2,7 +2,11 @@ import 'package:serverpod/server.dart';
 import 'package:serverpod_auth_server/module.dart';
 
 typedef SendValidationPhoneCallback = Future<bool> Function(
-    Session session, String number, String validationCode);
+  Session session,
+  String number,
+  String validationCode, {
+  Map<String, String>? extraParams,
+});
 
 class PhoneAuthConfig extends AuthConfig {
   static PhoneAuthConfig _config = PhoneAuthConfig();
