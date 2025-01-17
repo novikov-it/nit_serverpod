@@ -71,7 +71,7 @@ class ChatController {
   double scrollOffset = 0;
 
   /// We have scrolled to the bottom of the chat.
-  bool scrollAtBottom = true;
+  bool scrollAtBottom = false;
 
   int _lastReadMessage = 0;
 

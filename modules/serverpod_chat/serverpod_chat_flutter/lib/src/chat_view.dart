@@ -60,7 +60,8 @@ class ChatViewState extends State<ChatView>
     _scrollController = ScrollController(
       initialScrollOffset: widget.controller.scrollOffset,
     );
-    _jumpToBottom = widget.controller.scrollAtBottom;
+    _jumpToBottom = true;
+    // widget.controller.scrollAtBottom;
 
     _scrollController.addListener(() {
       widget.controller.scrollOffset = _scrollController.offset;
@@ -96,6 +97,7 @@ class ChatViewState extends State<ChatView>
     widget.controller.removeMessageUpdatedListener(_handleUpdatedChatMessage);
     widget.controller
         .removeReceivedMessageChunkListener(_handleNewMessageChunk);
+    widget.controller.scrollAtBottom = false;
     _scrollController.dispose();
     _fadeInAnimation.dispose();
     super.dispose();

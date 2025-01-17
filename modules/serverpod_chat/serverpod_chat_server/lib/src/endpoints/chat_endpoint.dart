@@ -154,7 +154,7 @@ class ChatEndpoint extends Endpoint {
       );
 
       if (!_isEphemeralChannel(message.channel)) {
-        await ChatMessage.db.insertRow(session, chatMessage);
+        chatMessage = await ChatMessage.db.insertRow(session, chatMessage);
       }
 
       session.messages.postMessage(
