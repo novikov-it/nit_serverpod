@@ -10,7 +10,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import 'protocol.dart' as _i2;
+import 'user_info.dart' as _i2;
+import 'authentication_fail_reason.dart' as _i3;
 
 /// Provides a response to an authentication attempt.
 abstract class AuthenticationResponse
@@ -29,7 +30,7 @@ abstract class AuthenticationResponse
     String? key,
     int? keyId,
     _i2.UserInfo? userInfo,
-    _i2.AuthenticationFailReason? failReason,
+    _i3.AuthenticationFailReason? failReason,
     String? failText,
   }) = _AuthenticationResponseImpl;
 
@@ -45,7 +46,7 @@ abstract class AuthenticationResponse
               (jsonSerialization['userInfo'] as Map<String, dynamic>)),
       failReason: jsonSerialization['failReason'] == null
           ? null
-          : _i2.AuthenticationFailReason.fromJson(
+          : _i3.AuthenticationFailReason.fromJson(
               (jsonSerialization['failReason'] as int)),
       failText: jsonSerialization['failText'] as String?,
     );
@@ -66,7 +67,7 @@ abstract class AuthenticationResponse
 
   /// Reason for a failed authentication attempt, only set if the authentication
   /// failed.
-  _i2.AuthenticationFailReason? failReason;
+  _i3.AuthenticationFailReason? failReason;
 
   /// The text to show for the failed authentication.
   String? failText;
@@ -76,7 +77,7 @@ abstract class AuthenticationResponse
     String? key,
     int? keyId,
     _i2.UserInfo? userInfo,
-    _i2.AuthenticationFailReason? failReason,
+    _i3.AuthenticationFailReason? failReason,
     String? failText,
   });
   @override
@@ -117,7 +118,7 @@ class _AuthenticationResponseImpl extends AuthenticationResponse {
     String? key,
     int? keyId,
     _i2.UserInfo? userInfo,
-    _i2.AuthenticationFailReason? failReason,
+    _i3.AuthenticationFailReason? failReason,
     String? failText,
   }) : super._(
           success: success,
@@ -143,7 +144,7 @@ class _AuthenticationResponseImpl extends AuthenticationResponse {
       keyId: keyId is int? ? keyId : this.keyId,
       userInfo:
           userInfo is _i2.UserInfo? ? userInfo : this.userInfo?.copyWith(),
-      failReason: failReason is _i2.AuthenticationFailReason?
+      failReason: failReason is _i3.AuthenticationFailReason?
           ? failReason
           : this.failReason,
       failText: failText is String? ? failText : this.failText,

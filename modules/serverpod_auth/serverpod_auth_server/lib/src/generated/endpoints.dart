@@ -400,6 +400,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
+            'userName': _i1.ParameterDescription(
+              name: 'userName',
+              type: _i1.getType<String?>(),
+              nullable: true,
+            ),
           },
           call: (
             _i1.Session session,
@@ -409,6 +414,7 @@ class Endpoints extends _i1.EndpointDispatch {
             session,
             params['phoneNumber'],
             params['otp'],
+            params['userName'],
           ),
         ),
         'sendOTP': _i1.MethodConnector(

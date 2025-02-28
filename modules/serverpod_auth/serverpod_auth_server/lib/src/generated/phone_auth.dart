@@ -8,8 +8,6 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 
-// ignore_for_file: invalid_use_of_visible_for_testing_member
-
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
 
@@ -252,7 +250,7 @@ class PhoneAuthRepository {
       orderDescending: orderDescending,
       limit: limit,
       offset: offset,
-      transaction: transaction ?? session.transaction,
+      transaction: transaction,
     );
   }
 
@@ -271,7 +269,7 @@ class PhoneAuthRepository {
       orderByList: orderByList?.call(PhoneAuth.t),
       orderDescending: orderDescending,
       offset: offset,
-      transaction: transaction ?? session.transaction,
+      transaction: transaction,
     );
   }
 
@@ -282,7 +280,7 @@ class PhoneAuthRepository {
   }) async {
     return session.db.findById<PhoneAuth>(
       id,
-      transaction: transaction ?? session.transaction,
+      transaction: transaction,
     );
   }
 
@@ -293,7 +291,7 @@ class PhoneAuthRepository {
   }) async {
     return session.db.insert<PhoneAuth>(
       rows,
-      transaction: transaction ?? session.transaction,
+      transaction: transaction,
     );
   }
 
@@ -304,7 +302,7 @@ class PhoneAuthRepository {
   }) async {
     return session.db.insertRow<PhoneAuth>(
       row,
-      transaction: transaction ?? session.transaction,
+      transaction: transaction,
     );
   }
 
@@ -317,7 +315,7 @@ class PhoneAuthRepository {
     return session.db.update<PhoneAuth>(
       rows,
       columns: columns?.call(PhoneAuth.t),
-      transaction: transaction ?? session.transaction,
+      transaction: transaction,
     );
   }
 
@@ -330,7 +328,7 @@ class PhoneAuthRepository {
     return session.db.updateRow<PhoneAuth>(
       row,
       columns: columns?.call(PhoneAuth.t),
-      transaction: transaction ?? session.transaction,
+      transaction: transaction,
     );
   }
 
@@ -341,7 +339,7 @@ class PhoneAuthRepository {
   }) async {
     return session.db.delete<PhoneAuth>(
       rows,
-      transaction: transaction ?? session.transaction,
+      transaction: transaction,
     );
   }
 
@@ -352,7 +350,7 @@ class PhoneAuthRepository {
   }) async {
     return session.db.deleteRow<PhoneAuth>(
       row,
-      transaction: transaction ?? session.transaction,
+      transaction: transaction,
     );
   }
 
@@ -363,7 +361,7 @@ class PhoneAuthRepository {
   }) async {
     return session.db.deleteWhere<PhoneAuth>(
       where: where(PhoneAuth.t),
-      transaction: transaction ?? session.transaction,
+      transaction: transaction,
     );
   }
 
@@ -376,7 +374,7 @@ class PhoneAuthRepository {
     return session.db.count<PhoneAuth>(
       where: where?.call(PhoneAuth.t),
       limit: limit,
-      transaction: transaction ?? session.transaction,
+      transaction: transaction,
     );
   }
 }
