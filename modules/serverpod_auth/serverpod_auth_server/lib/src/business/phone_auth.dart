@@ -18,6 +18,7 @@ class PhonesAuth {
     Session session, {
     required String number,
     required String otp,
+    String? userName,
   }) async {
     var entry = await PhoneAuth.db.findFirstRow(
       session,
@@ -68,6 +69,7 @@ class PhonesAuth {
           created: DateTime.now(),
           scopeNames: [],
           blocked: false,
+          userName: userName,
         ),
         _authMethod,
       );

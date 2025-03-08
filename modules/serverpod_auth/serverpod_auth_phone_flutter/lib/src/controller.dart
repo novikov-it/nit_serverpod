@@ -19,10 +19,17 @@ class PhoneAuthController {
 
   /// Attempts to sign in phone number and OTP. If successful, a [UserInfo]
   /// is returned. If the attempt is not a success, null is returned.
-  Future<UserInfo?> verifyOTP(String phoneNubmer, String otp) async {
+  Future<UserInfo?> verifyOTP(
+    String phoneNubmer,
+    String otp, [
+    String? userName,
+  ]) async {
     try {
-      var serverResponse =
-          await sessionManager.caller.phone.verifyOTP(phoneNubmer, otp);
+      var serverResponse = await sessionManager.caller.phone.verifyOTP(
+        phoneNubmer,
+        otp,
+        userName,
+      );
       if (!serverResponse.success ||
           serverResponse.userInfo == null ||
           serverResponse.keyId == null ||
@@ -79,25 +86,25 @@ class PhoneAuthController {
   }
 
   /// Attempts to resend an OTP.
-  Future<String> resendOTP(
+  Future<AuthenticationResponse> resendOTP(
     String phoneNumber, {
     Map<String, String>? extraParams,
   }) async {
     try {
-      return await sessionManager.caller.phone
-          .resendOTP(
-            phoneNumber,
-            extraParams: extraParams,
-          )
-          .then(
-            (value) => value.failReason.toString(),
-          );
+      return await sessionManager.caller.phone.resendOTP(
+        phoneNumber,
+        extraParams: extraParams,
+      );
     } catch (e, stackTrace) {
       if (kDebugMode) {
         print('$e');
         print('$stackTrace');
       }
-      return 'Failed to send OTP';
+      return AuthenticationResponse(
+        success: false,
+        failReason: AuthenticationFailReason.internalError,
+        failText: e.toString(),
+      );
     }
   }
 }

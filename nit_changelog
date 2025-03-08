@@ -1,3 +1,7 @@
+2025-03-08
+Added isUserByIdentifierExists method to user_endpoint
+Added userName to verifyOTP method in phone_auth
+
 2025-01-17
 Chat module fixes required for correct unreadMessages count in UI
 

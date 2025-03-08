@@ -1,6 +1,5 @@
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart';
-import 'package:serverpod_auth_server/src/business/phone_auth.dart';
 
 /// Endpoint for handling Sign in with phone.
 class PhoneEndpoint extends Endpoint {
@@ -10,8 +9,14 @@ class PhoneEndpoint extends Endpoint {
     Session session,
     String phoneNumber,
     String otp,
+    String? userName,
   ) {
-    return PhonesAuth.verifyOTP(session, number: phoneNumber, otp: otp);
+    return PhonesAuth.verifyOTP(
+      session,
+      number: phoneNumber,
+      otp: otp,
+      userName: userName,
+    );
   }
 
   /// Sends an OTP to the user.

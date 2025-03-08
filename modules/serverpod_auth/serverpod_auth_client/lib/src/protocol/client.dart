@@ -224,6 +224,7 @@ class EndpointPhone extends _i1.EndpointRef {
   _i2.Future<_i4.AuthenticationResponse> verifyOTP(
     String phoneNumber,
     String otp,
+    String? userName,
   ) =>
       caller.callServerEndpoint<_i4.AuthenticationResponse>(
         'serverpod_auth.phone',
@@ -231,6 +232,7 @@ class EndpointPhone extends _i1.EndpointRef {
         {
           'phoneNumber': phoneNumber,
           'otp': otp,
+          'userName': userName,
         },
       );
 
@@ -341,6 +343,14 @@ class EndpointUser extends _i1.EndpointRef {
         'serverpod_auth.user',
         'changeFullName',
         {'fullName': fullName},
+      );
+
+  /// Checks the user existence by identifier
+  _i2.Future<bool> isUserByIdentifierExists(String identifier) =>
+      caller.callServerEndpoint<bool>(
+        'serverpod_auth.user',
+        'isUserByIdentifierExists',
+        {'identifier': identifier},
       );
 }
 
