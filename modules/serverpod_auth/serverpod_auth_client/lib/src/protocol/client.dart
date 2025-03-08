@@ -344,6 +344,14 @@ class EndpointUser extends _i1.EndpointRef {
         'changeFullName',
         {'fullName': fullName},
       );
+
+  /// Checks the user existence by identifier
+  _i2.Future<bool> isUserByIdentifierExists(String identifier) =>
+      caller.callServerEndpoint<bool>(
+        'serverpod_auth.user',
+        'isUserByIdentifierExists',
+        {'identifier': identifier},
+      );
 }
 
 class Caller extends _i1.ModuleEndpointCaller {

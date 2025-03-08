@@ -65,4 +65,14 @@ class UserEndpoint extends Endpoint {
 
     return (await Users.changeFullName(session, userId, fullName)) != null;
   }
+
+  /// Checks the user existence by identifier
+  Future<bool> isUserByIdentifierExists(
+    Session session,
+    String identifier,
+  ) async {
+    if (identifier.isEmpty) return false;
+
+    return await Users.findUserByIdentifier(session, identifier) != null;
+  }
 }
