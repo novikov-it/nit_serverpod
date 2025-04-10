@@ -296,6 +296,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
+            'extraData': _i1.ParameterDescription(
+              name: 'extraData',
+              type: _i1.getType<Map<String, String>?>(),
+              nullable: true,
+            ),
           },
           call: (
             _i1.Session session,
@@ -305,6 +310,7 @@ class Endpoints extends _i1.EndpointDispatch {
             session,
             params['email'],
             params['verificationCode'],
+            extraData: params['extraData'],
           ),
         ),
       },

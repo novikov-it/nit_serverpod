@@ -29,6 +29,7 @@ abstract class UserInfo implements _i1.TableRow, _i1.ProtocolSerialization {
     this.imageUrl,
     required this.scopeNames,
     required this.blocked,
+    this.extraData,
   });
 
   factory UserInfo({
@@ -41,6 +42,7 @@ abstract class UserInfo implements _i1.TableRow, _i1.ProtocolSerialization {
     String? imageUrl,
     required List<String> scopeNames,
     required bool blocked,
+    Map<String, String>? extraData,
   }) = _UserInfoImpl;
 
   factory UserInfo.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -56,6 +58,11 @@ abstract class UserInfo implements _i1.TableRow, _i1.ProtocolSerialization {
           .map((e) => e as String)
           .toList(),
       blocked: jsonSerialization['blocked'] as bool,
+      extraData:
+          (jsonSerialization['extraData'] as Map?)?.map((k, v) => MapEntry(
+                k as String,
+                v as String,
+              )),
     );
   }
 
@@ -91,6 +98,8 @@ abstract class UserInfo implements _i1.TableRow, _i1.ProtocolSerialization {
   /// True if the user is blocked from signing in.
   bool blocked;
 
+  Map<String, String>? extraData;
+
   @override
   _i1.Table get table => t;
 
@@ -104,6 +113,7 @@ abstract class UserInfo implements _i1.TableRow, _i1.ProtocolSerialization {
     String? imageUrl,
     List<String>? scopeNames,
     bool? blocked,
+    Map<String, String>? extraData,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -117,6 +127,7 @@ abstract class UserInfo implements _i1.TableRow, _i1.ProtocolSerialization {
       if (imageUrl != null) 'imageUrl': imageUrl,
       'scopeNames': scopeNames.toJson(),
       'blocked': blocked,
+      if (extraData != null) 'extraData': extraData?.toJson(),
     };
   }
 
@@ -132,6 +143,7 @@ abstract class UserInfo implements _i1.TableRow, _i1.ProtocolSerialization {
       if (imageUrl != null) 'imageUrl': imageUrl,
       'scopeNames': scopeNames.toJson(),
       'blocked': blocked,
+      if (extraData != null) 'extraData': extraData?.toJson(),
     };
   }
 
@@ -178,6 +190,7 @@ class _UserInfoImpl extends UserInfo {
     String? imageUrl,
     required List<String> scopeNames,
     required bool blocked,
+    Map<String, String>? extraData,
   }) : super._(
           id: id,
           userIdentifier: userIdentifier,
@@ -188,6 +201,7 @@ class _UserInfoImpl extends UserInfo {
           imageUrl: imageUrl,
           scopeNames: scopeNames,
           blocked: blocked,
+          extraData: extraData,
         );
 
   @override
@@ -201,6 +215,7 @@ class _UserInfoImpl extends UserInfo {
     Object? imageUrl = _Undefined,
     List<String>? scopeNames,
     bool? blocked,
+    Object? extraData = _Undefined,
   }) {
     return UserInfo(
       id: id is int? ? id : this.id,
@@ -212,6 +227,16 @@ class _UserInfoImpl extends UserInfo {
       imageUrl: imageUrl is String? ? imageUrl : this.imageUrl,
       scopeNames: scopeNames ?? this.scopeNames.map((e0) => e0).toList(),
       blocked: blocked ?? this.blocked,
+      extraData: extraData is Map<String, String>?
+          ? extraData
+          : this.extraData?.map((
+                key0,
+                value0,
+              ) =>
+                  MapEntry(
+                    key0,
+                    value0,
+                  )),
     );
   }
 }
@@ -251,6 +276,10 @@ class UserInfoTable extends _i1.Table {
       'blocked',
       this,
     );
+    extraData = _i1.ColumnSerializable(
+      'extraData',
+      this,
+    );
   }
 
   /// Unique identifier of the user, may contain different information depending
@@ -278,6 +307,8 @@ class UserInfoTable extends _i1.Table {
   /// True if the user is blocked from signing in.
   late final _i1.ColumnBool blocked;
 
+  late final _i1.ColumnSerializable extraData;
+
   @override
   List<_i1.Column> get columns => [
         id,
@@ -289,6 +320,7 @@ class UserInfoTable extends _i1.Table {
         imageUrl,
         scopeNames,
         blocked,
+        extraData,
       ];
 }
 

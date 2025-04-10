@@ -27,6 +27,7 @@ abstract class UserInfo implements _i1.SerializableModel {
     this.imageUrl,
     required this.scopeNames,
     required this.blocked,
+    this.extraData,
   });
 
   factory UserInfo({
@@ -39,6 +40,7 @@ abstract class UserInfo implements _i1.SerializableModel {
     String? imageUrl,
     required List<String> scopeNames,
     required bool blocked,
+    Map<String, String>? extraData,
   }) = _UserInfoImpl;
 
   factory UserInfo.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -54,6 +56,11 @@ abstract class UserInfo implements _i1.SerializableModel {
           .map((e) => e as String)
           .toList(),
       blocked: jsonSerialization['blocked'] as bool,
+      extraData:
+          (jsonSerialization['extraData'] as Map?)?.map((k, v) => MapEntry(
+                k as String,
+                v as String,
+              )),
     );
   }
 
@@ -87,6 +94,8 @@ abstract class UserInfo implements _i1.SerializableModel {
   /// True if the user is blocked from signing in.
   bool blocked;
 
+  Map<String, String>? extraData;
+
   UserInfo copyWith({
     int? id,
     String? userIdentifier,
@@ -97,6 +106,7 @@ abstract class UserInfo implements _i1.SerializableModel {
     String? imageUrl,
     List<String>? scopeNames,
     bool? blocked,
+    Map<String, String>? extraData,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -110,6 +120,7 @@ abstract class UserInfo implements _i1.SerializableModel {
       if (imageUrl != null) 'imageUrl': imageUrl,
       'scopeNames': scopeNames.toJson(),
       'blocked': blocked,
+      if (extraData != null) 'extraData': extraData?.toJson(),
     };
   }
 
@@ -132,6 +143,7 @@ class _UserInfoImpl extends UserInfo {
     String? imageUrl,
     required List<String> scopeNames,
     required bool blocked,
+    Map<String, String>? extraData,
   }) : super._(
           id: id,
           userIdentifier: userIdentifier,
@@ -142,6 +154,7 @@ class _UserInfoImpl extends UserInfo {
           imageUrl: imageUrl,
           scopeNames: scopeNames,
           blocked: blocked,
+          extraData: extraData,
         );
 
   @override
@@ -155,6 +168,7 @@ class _UserInfoImpl extends UserInfo {
     Object? imageUrl = _Undefined,
     List<String>? scopeNames,
     bool? blocked,
+    Object? extraData = _Undefined,
   }) {
     return UserInfo(
       id: id is int? ? id : this.id,
@@ -166,6 +180,16 @@ class _UserInfoImpl extends UserInfo {
       imageUrl: imageUrl is String? ? imageUrl : this.imageUrl,
       scopeNames: scopeNames ?? this.scopeNames.map((e0) => e0).toList(),
       blocked: blocked ?? this.blocked,
+      extraData: extraData is Map<String, String>?
+          ? extraData
+          : this.extraData?.map((
+                key0,
+                value0,
+              ) =>
+                  MapEntry(
+                    key0,
+                    value0,
+                  )),
     );
   }
 }

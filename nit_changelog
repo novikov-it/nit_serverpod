@@ -1,3 +1,7 @@
+2025-04-10
+Added extraData to UserInfo and email_auth
+Set up default code 123456 if sendValidationEmail is not configured for email_auth
+
 2025-03-20
 Phone auth controller resend OTP fix
 

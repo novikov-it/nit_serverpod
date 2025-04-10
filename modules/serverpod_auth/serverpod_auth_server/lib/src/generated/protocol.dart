@@ -728,6 +728,12 @@ class Protocol extends _i1.SerializationManagerServer {
           isNullable: false,
           dartType: 'bool',
         ),
+        _i2.ColumnDefinition(
+          name: 'extraData',
+          columnType: _i2.ColumnType.json,
+          isNullable: true,
+          dartType: 'Map<String,String>?',
+        ),
       ],
       foreignKeys: [],
       indexes: [
@@ -887,6 +893,18 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList()
           as dynamic;
+    }
+    if (t == _i1.getType<Map<String, String>?>()) {
+      return (data != null
+          ? (data as Map).map((k, v) =>
+              MapEntry(deserialize<String>(k), deserialize<String>(v)))
+          : null) as dynamic;
+    }
+    if (t == _i1.getType<Map<String, String>?>()) {
+      return (data != null
+          ? (data as Map).map((k, v) =>
+              MapEntry(deserialize<String>(k), deserialize<String>(v)))
+          : null) as dynamic;
     }
     if (t == _i1.getType<Map<String, String>?>()) {
       return (data != null

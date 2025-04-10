@@ -71,10 +71,15 @@ class EmailAuthController {
   /// success, null is returned.
   Future<UserInfo?> validateAccount(
     String email,
-    String verificationCode,
-  ) async {
+    String verificationCode, {
+    Map<String, String>? extraData,
+  }) async {
     try {
-      return await caller.email.createAccount(email, verificationCode);
+      return await caller.email.createAccount(
+        email,
+        verificationCode,
+        extraData: extraData,
+      );
     } catch (e) {
       return null;
     }

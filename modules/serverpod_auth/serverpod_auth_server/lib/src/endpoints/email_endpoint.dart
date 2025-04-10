@@ -60,8 +60,9 @@ class EmailEndpoint extends Endpoint {
   Future<UserInfo?> createAccount(
     Session session,
     String email,
-    String verificationCode,
-  ) async {
+    String verificationCode, {
+    Map<String, String>? extraData,
+  }) async {
     var request = await Emails.findAccountRequest(session, email);
     if (request == null) {
       return null;
@@ -77,6 +78,7 @@ class EmailEndpoint extends Endpoint {
       email,
       null,
       request.hash,
+      extraData,
     );
   }
 }

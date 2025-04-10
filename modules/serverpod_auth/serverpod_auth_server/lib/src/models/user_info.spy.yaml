@@ -30,6 +30,7 @@ fields:
 
   ### True if the user is blocked from signing in.
   blocked: bool
+  extraData: Map<String, String>?
 indexes:
   serverpod_user_info_user_identifier:
     fields: userIdentifier

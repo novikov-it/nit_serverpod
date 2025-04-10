@@ -150,14 +150,16 @@ class EndpointEmail extends _i1.EndpointRef {
   /// Creates a new account using a verification code.
   _i2.Future<_i3.UserInfo?> createAccount(
     String email,
-    String verificationCode,
-  ) =>
+    String verificationCode, {
+    Map<String, String>? extraData,
+  }) =>
       caller.callServerEndpoint<_i3.UserInfo?>(
         'serverpod_auth.email',
         'createAccount',
         {
           'email': email,
           'verificationCode': verificationCode,
+          'extraData': extraData,
         },
       );
 }

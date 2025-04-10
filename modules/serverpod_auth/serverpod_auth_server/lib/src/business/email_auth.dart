@@ -203,6 +203,7 @@ class Emails {
     String email,
     String? password, [
     String? hash,
+    Map<String, String>? extraData,
   ]) async {
     if (password == null && hash == null) {
       throw Exception('Either password or hash needs to be provided');
@@ -211,13 +212,13 @@ class Emails {
 
     if (userInfo == null) {
       userInfo = UserInfo(
-        userIdentifier: email,
-        email: email,
-        userName: userName,
-        created: DateTime.now(),
-        scopeNames: [],
-        blocked: false,
-      );
+          userIdentifier: email,
+          email: email,
+          userName: userName,
+          created: DateTime.now(),
+          scopeNames: [],
+          blocked: false,
+          extraData: extraData);
 
       session.log('creating user', level: LogLevel.debug);
       userInfo = await Users.createUser(session, userInfo, 'email');
@@ -395,13 +396,13 @@ class Emails {
     String email,
     String password,
   ) async {
-    if (AuthConfig.current.sendValidationEmail == null) {
-      session.log(
-        'SendValidationEmail is not configured, cannot send email.',
-        level: LogLevel.debug,
-      );
-      return false;
-    }
+    // if (AuthConfig.current.sendValidationEmail == null) {
+    //   session.log(
+    //     'SendValidationEmail is not configured, cannot send email.',
+    //     level: LogLevel.debug,
+    //   );
+    //   return false;
+    // }
 
     try {
       // Check if user already has an account
@@ -446,25 +447,29 @@ class Emails {
       }
 
       var accountRequest = await findAccountRequest(session, email);
+      var verificationCode = AuthConfig.current.sendValidationEmail == null
+          ? '123456'
+          : _generateVerificationCode();
       if (accountRequest == null) {
         accountRequest = EmailCreateAccountRequest(
           userName: userName,
           email: email,
           hash: await generatePasswordHash(password),
-          verificationCode: _generateVerificationCode(),
+          verificationCode: verificationCode,
         );
         await EmailCreateAccountRequest.db.insertRow(session, accountRequest);
       } else {
         accountRequest.userName = userName;
-        accountRequest.verificationCode = _generateVerificationCode();
+        accountRequest.verificationCode = verificationCode;
         await EmailCreateAccountRequest.db.updateRow(session, accountRequest);
       }
 
-      return await AuthConfig.current.sendValidationEmail!(
-        session,
-        email,
-        accountRequest.verificationCode,
-      );
+      return await (AuthConfig.current.sendValidationEmail?.call(
+            session,
+            email,
+            accountRequest.verificationCode,
+          ) ??
+          Future.value(true));
     } catch (e) {
       session.log(
         '$e',
