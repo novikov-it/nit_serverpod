@@ -1,3 +1,6 @@
+2025-05-26
+Enabled userExtraData for phoneAuth
+
 2025-04-10
 Added extraData to UserInfo and email_auth
 Set up default code 123456 if sendValidationEmail is not configured for email_auth

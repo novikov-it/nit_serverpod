@@ -5,9 +5,8 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 // ignore: implementation_imports
 import 'package:serverpod/serverpod.dart';
-import 'package:serverpod_auth_server/serverpod_auth_server.dart';
-
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 
 const _authMethod = 'phone';
 
@@ -18,6 +17,7 @@ class PhonesAuth {
     Session session, {
     required String number,
     required String otp,
+    Map<String, String>? userExtraData,
   }) async {
     var entry = await PhoneAuth.db.findFirstRow(
       session,
@@ -68,6 +68,10 @@ class PhonesAuth {
           created: DateTime.now(),
           scopeNames: [],
           blocked: false,
+          extraData: {
+            if (entry.userExtraData != null) ...entry.userExtraData!,
+            if (userExtraData != null) ...userExtraData
+          },
         ),
         _authMethod,
       );
@@ -100,7 +104,8 @@ class PhonesAuth {
   static Future<AuthenticationResponse> sendOTP(
     Session session, {
     required String number,
-    Map<String, String>? extraParams,
+    Map<String, String>? userExtraData,
+    Map<String, String>? sendOtpExtraParams,
   }) async {
     // if (number.length != 11 || !number.startsWith('7')) {
     //   session.log(
@@ -142,20 +147,21 @@ class PhonesAuth {
           session,
           number,
           otp,
-          extraParams: extraParams,
+          extraParams: sendOtpExtraParams,
         );
       }
 
       var expirationTime = _getHashExpirationTime(hash);
       if (expirationTime == null) return AuthenticationResponse(success: false);
 
-      var phoneAuth = PhoneAuth(
-        phoneNumber: number,
-        hash: hash,
-        expirationTime: expirationTime,
+      await session.db.insertRow(
+        PhoneAuth(
+          phoneNumber: number,
+          hash: hash,
+          expirationTime: expirationTime,
+          userExtraData: userExtraData,
+        ),
       );
-
-      await PhoneAuth.db.insertRow(session, phoneAuth);
     } catch (e) {
       session.log('Error sending OTP to $number: $e', level: LogLevel.error);
       return AuthenticationResponse(
@@ -173,6 +179,7 @@ class PhonesAuth {
   static Future<AuthenticationResponse> resendOTP(
     Session session, {
     required String number,
+    Map<String, String>? userExtraData,
     Map<String, String>? extraParams,
   }) async {
     var phoneAuthConfig = PhoneAuthConfig.current;
@@ -193,7 +200,12 @@ class PhonesAuth {
       );
     }
 
-    return await sendOTP(session, number: number, extraParams: extraParams);
+    return await sendOTP(
+      session,
+      number: number,
+      userExtraData: userExtraData,
+      sendOtpExtraParams: extraParams,
+    );
   }
 
   static bool _verifyHashData(

@@ -19,10 +19,17 @@ class PhoneAuthController {
 
   /// Attempts to sign in phone number and OTP. If successful, a [UserInfo]
   /// is returned. If the attempt is not a success, null is returned.
-  Future<UserInfo?> verifyOTP(String phoneNubmer, String otp) async {
+  Future<UserInfo?> verifyOTP(
+    String phoneNubmer,
+    String otp, {
+    Map<String, String>? userExtraData,
+  }) async {
     try {
-      var serverResponse =
-          await sessionManager.caller.phone.verifyOTP(phoneNubmer, otp);
+      var serverResponse = await sessionManager.caller.phone.verifyOTP(
+        phoneNubmer,
+        otp,
+        userExtraData: userExtraData,
+      );
       if (!serverResponse.success ||
           serverResponse.userInfo == null ||
           serverResponse.keyId == null ||
@@ -58,6 +65,7 @@ class PhoneAuthController {
   /// Attempts to send an OTP. null
   Future<AuthenticationResponse> sendOTP(
     String phoneNumber, {
+    Map<String, String>? userExtraData,
     Map<String, String>? extraParams,
     bool resend = false,
   }) async {
@@ -66,6 +74,7 @@ class PhoneAuthController {
           ? sessionManager.caller.phone.resendOTP
           : sessionManager.caller.phone.sendOTP)(
         phoneNumber,
+        userExtraData: userExtraData,
         extraParams: extraParams,
       );
     } catch (e, stackTrace) {

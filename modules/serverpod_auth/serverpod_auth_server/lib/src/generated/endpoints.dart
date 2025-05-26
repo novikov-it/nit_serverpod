@@ -406,6 +406,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
+            'userExtraData': _i1.ParameterDescription(
+              name: 'userExtraData',
+              type: _i1.getType<Map<String, String>?>(),
+              nullable: true,
+            ),
           },
           call: (
             _i1.Session session,
@@ -415,6 +420,7 @@ class Endpoints extends _i1.EndpointDispatch {
             session,
             params['phoneNumber'],
             params['otp'],
+            userExtraData: params['userExtraData'],
           ),
         ),
         'sendOTP': _i1.MethodConnector(
@@ -424,6 +430,11 @@ class Endpoints extends _i1.EndpointDispatch {
               name: 'phoneNumber',
               type: _i1.getType<String>(),
               nullable: false,
+            ),
+            'userExtraData': _i1.ParameterDescription(
+              name: 'userExtraData',
+              type: _i1.getType<Map<String, String>?>(),
+              nullable: true,
             ),
             'extraParams': _i1.ParameterDescription(
               name: 'extraParams',
@@ -438,6 +449,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['phone'] as _i7.PhoneEndpoint).sendOTP(
             session,
             params['phoneNumber'],
+            userExtraData: params['userExtraData'],
             extraParams: params['extraParams'],
           ),
         ),
@@ -448,6 +460,11 @@ class Endpoints extends _i1.EndpointDispatch {
               name: 'phoneNumber',
               type: _i1.getType<String>(),
               nullable: false,
+            ),
+            'userExtraData': _i1.ParameterDescription(
+              name: 'userExtraData',
+              type: _i1.getType<Map<String, String>?>(),
+              nullable: true,
             ),
             'extraParams': _i1.ParameterDescription(
               name: 'extraParams',
@@ -462,6 +479,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['phone'] as _i7.PhoneEndpoint).resendOTP(
             session,
             params['phoneNumber'],
+            userExtraData: params['userExtraData'],
             extraParams: params['extraParams'],
           ),
         ),

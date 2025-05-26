@@ -16,6 +16,7 @@ fields:
 
   ### If the otp has been used
   isUsed: bool, default = false
+  userExtraData: Map<String, String>?
 
 indexes:
   serverpod_phone_auth_phone:

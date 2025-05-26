@@ -1,6 +1,5 @@
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart';
-import 'package:serverpod_auth_server/src/business/phone_auth.dart';
 
 /// Endpoint for handling Sign in with phone.
 class PhoneEndpoint extends Endpoint {
@@ -9,21 +8,29 @@ class PhoneEndpoint extends Endpoint {
   Future<AuthenticationResponse> verifyOTP(
     Session session,
     String phoneNumber,
-    String otp,
-  ) {
-    return PhonesAuth.verifyOTP(session, number: phoneNumber, otp: otp);
+    String otp, {
+    Map<String, String>? userExtraData,
+  }) {
+    return PhonesAuth.verifyOTP(
+      session,
+      number: phoneNumber,
+      otp: otp,
+      userExtraData: userExtraData,
+    );
   }
 
   /// Sends an OTP to the user.
   Future<AuthenticationResponse> sendOTP(
     Session session,
     String phoneNumber, {
+    Map<String, String>? userExtraData,
     Map<String, String>? extraParams,
   }) {
     return PhonesAuth.sendOTP(
       session,
       number: phoneNumber,
-      extraParams: extraParams,
+      userExtraData: userExtraData,
+      sendOtpExtraParams: extraParams,
     );
   }
 
@@ -31,11 +38,13 @@ class PhoneEndpoint extends Endpoint {
   Future<AuthenticationResponse> resendOTP(
     Session session,
     String phoneNumber, {
+    Map<String, String>? userExtraData,
     Map<String, String>? extraParams,
   }) {
     return PhonesAuth.resendOTP(
       session,
       number: phoneNumber,
+      userExtraData: userExtraData,
       extraParams: extraParams,
     );
   }

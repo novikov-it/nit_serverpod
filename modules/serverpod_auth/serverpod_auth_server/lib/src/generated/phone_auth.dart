@@ -21,6 +21,7 @@ abstract class PhoneAuth implements _i1.TableRow, _i1.ProtocolSerialization {
     required this.hash,
     required this.expirationTime,
     bool? isUsed,
+    this.userExtraData,
   }) : isUsed = isUsed ?? false;
 
   factory PhoneAuth({
@@ -29,6 +30,7 @@ abstract class PhoneAuth implements _i1.TableRow, _i1.ProtocolSerialization {
     required String hash,
     required DateTime expirationTime,
     bool? isUsed,
+    Map<String, String>? userExtraData,
   }) = _PhoneAuthImpl;
 
   factory PhoneAuth.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -39,6 +41,11 @@ abstract class PhoneAuth implements _i1.TableRow, _i1.ProtocolSerialization {
       expirationTime: _i1.DateTimeJsonExtension.fromJson(
           jsonSerialization['expirationTime']),
       isUsed: jsonSerialization['isUsed'] as bool,
+      userExtraData:
+          (jsonSerialization['userExtraData'] as Map?)?.map((k, v) => MapEntry(
+                k as String,
+                v as String,
+              )),
     );
   }
 
@@ -61,6 +68,8 @@ abstract class PhoneAuth implements _i1.TableRow, _i1.ProtocolSerialization {
   /// If the otp has been used
   bool isUsed;
 
+  Map<String, String>? userExtraData;
+
   @override
   _i1.Table get table => t;
 
@@ -70,6 +79,7 @@ abstract class PhoneAuth implements _i1.TableRow, _i1.ProtocolSerialization {
     String? hash,
     DateTime? expirationTime,
     bool? isUsed,
+    Map<String, String>? userExtraData,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -79,6 +89,7 @@ abstract class PhoneAuth implements _i1.TableRow, _i1.ProtocolSerialization {
       'hash': hash,
       'expirationTime': expirationTime.toJson(),
       'isUsed': isUsed,
+      if (userExtraData != null) 'userExtraData': userExtraData?.toJson(),
     };
   }
 
@@ -90,6 +101,7 @@ abstract class PhoneAuth implements _i1.TableRow, _i1.ProtocolSerialization {
       'hash': hash,
       'expirationTime': expirationTime.toJson(),
       'isUsed': isUsed,
+      if (userExtraData != null) 'userExtraData': userExtraData?.toJson(),
     };
   }
 
@@ -132,12 +144,14 @@ class _PhoneAuthImpl extends PhoneAuth {
     required String hash,
     required DateTime expirationTime,
     bool? isUsed,
+    Map<String, String>? userExtraData,
   }) : super._(
           id: id,
           phoneNumber: phoneNumber,
           hash: hash,
           expirationTime: expirationTime,
           isUsed: isUsed,
+          userExtraData: userExtraData,
         );
 
   @override
@@ -147,6 +161,7 @@ class _PhoneAuthImpl extends PhoneAuth {
     String? hash,
     DateTime? expirationTime,
     bool? isUsed,
+    Object? userExtraData = _Undefined,
   }) {
     return PhoneAuth(
       id: id is int? ? id : this.id,
@@ -154,6 +169,16 @@ class _PhoneAuthImpl extends PhoneAuth {
       hash: hash ?? this.hash,
       expirationTime: expirationTime ?? this.expirationTime,
       isUsed: isUsed ?? this.isUsed,
+      userExtraData: userExtraData is Map<String, String>?
+          ? userExtraData
+          : this.userExtraData?.map((
+                key0,
+                value0,
+              ) =>
+                  MapEntry(
+                    key0,
+                    value0,
+                  )),
     );
   }
 }
@@ -178,6 +203,10 @@ class PhoneAuthTable extends _i1.Table {
       this,
       hasDefault: true,
     );
+    userExtraData = _i1.ColumnSerializable(
+      'userExtraData',
+      this,
+    );
   }
 
   /// The phoneNumber of the user.
@@ -192,6 +221,8 @@ class PhoneAuthTable extends _i1.Table {
   /// If the otp has been used
   late final _i1.ColumnBool isUsed;
 
+  late final _i1.ColumnSerializable userExtraData;
+
   @override
   List<_i1.Column> get columns => [
         id,
@@ -199,6 +230,7 @@ class PhoneAuthTable extends _i1.Table {
         hash,
         expirationTime,
         isUsed,
+        userExtraData,
       ];
 }
 

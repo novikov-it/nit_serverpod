@@ -225,20 +225,23 @@ class EndpointPhone extends _i1.EndpointRef {
   /// [AuthenticationResponse] with the users information.
   _i2.Future<_i4.AuthenticationResponse> verifyOTP(
     String phoneNumber,
-    String otp,
-  ) =>
+    String otp, {
+    Map<String, String>? userExtraData,
+  }) =>
       caller.callServerEndpoint<_i4.AuthenticationResponse>(
         'serverpod_auth.phone',
         'verifyOTP',
         {
           'phoneNumber': phoneNumber,
           'otp': otp,
+          'userExtraData': userExtraData,
         },
       );
 
   /// Sends an OTP to the user.
   _i2.Future<_i4.AuthenticationResponse> sendOTP(
     String phoneNumber, {
+    Map<String, String>? userExtraData,
     Map<String, String>? extraParams,
   }) =>
       caller.callServerEndpoint<_i4.AuthenticationResponse>(
@@ -246,6 +249,7 @@ class EndpointPhone extends _i1.EndpointRef {
         'sendOTP',
         {
           'phoneNumber': phoneNumber,
+          'userExtraData': userExtraData,
           'extraParams': extraParams,
         },
       );
@@ -253,6 +257,7 @@ class EndpointPhone extends _i1.EndpointRef {
   /// Resends an OTP to the user.
   _i2.Future<_i4.AuthenticationResponse> resendOTP(
     String phoneNumber, {
+    Map<String, String>? userExtraData,
     Map<String, String>? extraParams,
   }) =>
       caller.callServerEndpoint<_i4.AuthenticationResponse>(
@@ -260,6 +265,7 @@ class EndpointPhone extends _i1.EndpointRef {
         'resendOTP',
         {
           'phoneNumber': phoneNumber,
+          'userExtraData': userExtraData,
           'extraParams': extraParams,
         },
       );
