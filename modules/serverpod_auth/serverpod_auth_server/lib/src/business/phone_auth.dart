@@ -29,6 +29,7 @@ class PhonesAuth {
     );
 
     if (entry == null) {
+      session.log('Failed to verify user $number: non-used auth not found');
       return AuthenticationResponse(
         success: false,
         failReason: AuthenticationFailReason.invalidCredentials,
@@ -44,7 +45,7 @@ class PhonesAuth {
     );
 
     if (!verification) {
-      session.log('Failed to verify user $number');
+      session.log('Failed to verify user $number: Invalid otp');
       return AuthenticationResponse(
         success: false,
         failReason: AuthenticationFailReason.invalidCredentials,
