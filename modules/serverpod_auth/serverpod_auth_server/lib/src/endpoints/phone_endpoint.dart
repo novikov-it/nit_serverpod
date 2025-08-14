@@ -10,18 +10,19 @@ class PhoneEndpoint extends Endpoint {
     String phoneNumber,
     String otp, {
     Map<String, String>? userExtraData,
-  }) {
-    final res = await PhonesAuth.verifyOTP(
+  }) async {
+    var res = await PhonesAuth.verifyOTP(
       session,
       number: phoneNumber,
       otp: otp,
       userExtraData: userExtraData,
     );
-  if(res.success != true) {
-    session.log("Failed to verifyOtp $otp for $phoneNumber ${res.failReason} ${res.failText}");
-  }
+    if (res.success != true) {
+      session.log(
+          'Failed to verifyOtp $otp for $phoneNumber ${res.failReason} ${res.failText}');
+    }
 
-  return res;
+    return res;
   }
 
   /// Sends an OTP to the user.
