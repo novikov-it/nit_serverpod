@@ -37,6 +37,8 @@ class PhonesAuth {
       );
     }
 
+    print('Verifying $number with $otp, expect hash to be ${entry.hash}');
+
     var verification = _verifyHashData(
       session,
       hashedData: entry.hash,
@@ -45,7 +47,10 @@ class PhonesAuth {
     );
 
     if (!verification) {
-      session.log('Failed to verify user $number: Invalid otp');
+      session.log(
+        'Failed to verify user $number: Invalid otp',
+        level: LogLevel.error,
+      );
       return AuthenticationResponse(
         success: false,
         failReason: AuthenticationFailReason.invalidCredentials,
@@ -233,6 +238,9 @@ class PhonesAuth {
 
     var isValid = hash == hashedData;
     if (!isValid) {
+      print(
+        'Expected hash $hashedData for number $phoneNumber with otp $otp, but calculated hash is $hash',
+      );
       _logFailedSignIn(session, phoneNumber);
     }
 
